@@ -1,0 +1,35 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /snips/{snipId} {
+
+      function validId() {
+        return snipId.matches('^[A-HJ-NP-Za-kmnp-z]{4}-[0-9]{3}$');
+      }
+
+      allow get: if validId()
+                 && (resource == null || resource.data.expiresAt > request.time);
+
+      allow list: if false;
+
+      allow create: if validId()
+                    && request.resource.data.keys().hasOnly(['content', 'createdAt', 'expiresAt'])
+                    && request.resource.data.keys().hasAll(['content', 'createdAt', 'expiresAt'])
+                    && request.resource.data.content is string
+                    && request.resource.data.content.size() > 0
+                    && request.resource.data.content.size() <= 10000
+                    && request.resource.data.createdAt == request.time
+                    && request.resource.data.expiresAt is timestamp
+                    && request.resource.data.expiresAt > request.time
+                    && request.resource.data.expiresAt < request.time + duration.value(20, 'm');
+
+      allow update, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
