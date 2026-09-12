@@ -18,3 +18,5 @@ export const firebaseConfig = {
   messagingSenderId: required('VITE_FIREBASE_MESSAGING_SENDER_ID'),
   appId: required('VITE_FIREBASE_APP_ID'),
 } as const;
+
+export const recaptchaSiteKey = required('VITE_RECAPTCHA_SITE_KEY');
