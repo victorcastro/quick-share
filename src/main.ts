@@ -88,7 +88,7 @@ function activateSnip(snip: Snip, createdHere: boolean): void {
     writeIdToHash(snip.id);
     setLookupValue(snip.id);
   }
-  startCountdown(snip.expiresAt, () => {
+  startCountdown(snip.id, snip.expiresAt, () => {
     if (activeSnip?.id !== snip.id) {
       return;
     }

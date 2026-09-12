@@ -24,8 +24,13 @@ export function stopCountdown(): void {
   setText(countdown, '');
 }
 
-export function startCountdown(expiresAt: Date, onExpire: () => void): void {
+export function startCountdown(id: string, expiresAt: Date, onExpire: () => void): void {
   stopCountdown();
+
+  const code = document.createElement('strong');
+  code.className = 'font-semibold';
+  code.textContent = id;
+  const remainingText = document.createTextNode('');
 
   const tick = (): void => {
     const remaining = msUntilExpiry(expiresAt);
@@ -35,7 +40,10 @@ export function startCountdown(expiresAt: Date, onExpire: () => void): void {
       return;
     }
     countdown.classList.toggle('is-urgent', remaining < URGENT_THRESHOLD_MS);
-    setText(countdown, `Expires in ${format(remaining)}`);
+    remainingText.data = ` expires in ${format(remaining)}`;
+    if (!countdown.contains(code)) {
+      countdown.replaceChildren(code, remainingText);
+    }
   };
 
   tick();
