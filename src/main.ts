@@ -66,6 +66,7 @@ function clearLookupInvalid(): void {
 function syncLookupClear(): void {
   const empty = lookupInput.value.length === 0;
   lookupClear.hidden = empty;
+  readButton.hidden = empty;
   readButton.disabled = empty;
 }
 

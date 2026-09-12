@@ -110,12 +110,24 @@
   display: none !important;
 }
 
+#lookup-field:has(> #read:not([hidden])) > #lookup {
+  padding-right: 2.5rem;
+}
+
+#lookup-field:has(> #read:not([hidden])) > #lookup-line {
+  right: 2.5rem;
+}
+
 .is-invalid > input,
 .is-invalid > input:focus-visible,
 textarea.is-invalid,
 textarea.is-invalid:focus-visible {
   border-color: var(--danger);
   box-shadow: 0 0 0 3px var(--danger-soft);
+}
+
+.is-invalid > #lookup-line {
+  border-color: var(--danger);
 }
 
 .is-invalid {

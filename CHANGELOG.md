@@ -3,6 +3,24 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.1.0] - 2026-09-12
+
+### Changed
+
+- Reworked the lookup field: an underlined input replacing the boxed style, larger centered text,
+  a `code?` placeholder, and a submit button that only appears once a code is typed.
+- Moved the copy-link and QR actions above the text area, out of the header.
+- Removed the text area's border and increased its inner padding.
+- Placeholder phrases now type out with a trailing `...` and hold longer before cycling.
+- Hid the theme toggle button (logic kept for a future re-enable).
+
+### Fixed
+
+- QR popover and the "Copied" tooltip rendering behind the text area on narrow viewports.
+- Lookup field's clear (`×`) and submit buttons not receiving clicks, shadowed by the input
+  after it was restyled with a higher stacking order.
+- Underline reserving space for the submit button even when it was hidden, leaving a visible gap.
+
 ## [1.0.0] - 2026-09-11
 
 First release.
@@ -36,4 +54,5 @@ First release.
 - The TTL policy requires the Blaze plan. On Spark, expired snips stay in storage although they remain inaccessible.
 - A snip cannot be deleted or revoked before it expires.
 
+[1.1.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.1.0
 [1.0.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.0.0
