@@ -3,6 +3,16 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.3.2] - 2026-09-12
+
+### Changed
+
+- Compact textarea actions now use icon-only controls, while retaining labels on larger screens.
+- Centered the compact link actions and balanced the header with one-third branding and two-thirds
+  code lookup proportions.
+- Removed the unused textarea background glow styles.
+- Production builds now minify `index.html` in addition to JavaScript and CSS assets.
+
 ## [1.3.1] - 2026-09-12
 
 ### Changed
@@ -127,6 +137,7 @@ First release.
 - The TTL policy requires the Blaze plan. On Spark, expired snips stay in storage although they remain inaccessible.
 - A snip cannot be deleted or revoked before it expires.
 
+[1.3.2]: https://github.com/victorcastro/quick-share/releases/tag/v1.3.2
 [1.3.1]: https://github.com/victorcastro/quick-share/releases/tag/v1.3.1
 [1.3.0]: https://github.com/victorcastro/quick-share/releases/tag/v1.3.0
 [1.2.0]: https://github.com/victorcastro/quick-share/releases/tag/v1.2.0
