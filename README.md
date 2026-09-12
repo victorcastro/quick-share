@@ -5,6 +5,8 @@ it, and whoever holds the code reads the text until it expires a few minutes lat
 
 No sign-up, no login, no backend: the browser talks to Firestore directly.
 
+**Try it: [victorcastro.github.io/quick-snip](https://victorcastro.github.io/quick-snip)**
+
 ## Quick start
 
 Requires Node 24.
