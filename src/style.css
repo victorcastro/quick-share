@@ -127,14 +127,6 @@
   opacity: 1;
 }
 
-#lookup-field:has(> #read:not([hidden])) > #lookup {
-  padding-right: 2.5rem;
-}
-
-#lookup-field:has(> #read:not([hidden])) > #lookup-line {
-  right: 2.5rem;
-}
-
 .is-invalid > input,
 .is-invalid > input:focus-visible,
 textarea.is-invalid,

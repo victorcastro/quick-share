@@ -3,11 +3,13 @@ import { requireElement } from './dom';
 
 const field = requireElement('lookup-field', HTMLElement);
 const input = requireElement('lookup', HTMLInputElement);
+const pasteButton = requireElement('lookup-paste', HTMLButtonElement);
 const clearButton = requireElement('lookup-clear', HTMLButtonElement);
 const submitButton = requireElement('read', HTMLButtonElement);
 
 function syncButtons(): void {
   const empty = input.value.length === 0;
+  pasteButton.hidden = !empty;
   clearButton.hidden = empty;
   submitButton.hidden = empty;
   submitButton.disabled = empty;
@@ -58,12 +60,20 @@ function applyMask(event: Event): void {
   syncButtons();
 }
 
+export function pasteIntoLookup(text: string): void {
+  clearLookupInvalid();
+  input.value = maskId(text);
+  syncButtons();
+  input.focus();
+}
+
 export interface LookupFieldHandlers {
   onSubmit: (rawId: string) => void;
   onClear: () => void;
+  onPaste: () => void;
 }
 
-export function initLookupField({ onSubmit, onClear }: LookupFieldHandlers): void {
+export function initLookupField({ onSubmit, onClear, onPaste }: LookupFieldHandlers): void {
   input.addEventListener('input', applyMask);
 
   input.addEventListener('keydown', (event) => {
@@ -75,6 +85,8 @@ export function initLookupField({ onSubmit, onClear }: LookupFieldHandlers): voi
   submitButton.addEventListener('click', () => {
     onSubmit(input.value);
   });
+
+  pasteButton.addEventListener('click', onPaste);
 
   clearButton.addEventListener('click', () => {
     input.value = '';

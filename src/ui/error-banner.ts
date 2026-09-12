@@ -12,6 +12,10 @@ export function showError(error: unknown): void {
   }
 }
 
+export function showMessage(message: string): void {
+  setText(errorBox, message);
+}
+
 export function clearError(): void {
   setText(errorBox, '');
 }
