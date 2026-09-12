@@ -14,6 +14,7 @@ Versioning: [SemVer](https://semver.org/).
   lookup field that occupies half the available width and smaller compact typography while keeping
   the rest of the page in its normal vertical flow.
 - Gave the compact brand block the matching half-width column for a balanced header layout.
+- Increased the central textarea background glow and changed it from green to white in both themes.
 
 ## [1.3.0] - 2026-09-12
 
