@@ -3,6 +3,51 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.1.0] - 2026-09-12
+
+### Added
+
+- The copy-link and QR buttons now show a spinner in place of their icon while the snip is being
+  created, so the wait is visible instead of the button just greying out. Only the clicked button
+  spins; the other stays disabled with its icon. Nothing spins when the content is already shared,
+  since no request is made.
+- A paste button in the lookup field, shown only while the field is empty and sharing the slot the
+  clear button occupies. It runs the clipboard text through the ID mask, so pasting a whole share
+  link leaves just the code. Hovering or focusing it shows a `Paste` tooltip.
+
+### Changed
+
+- Reworked the lookup field: an underlined input replacing the boxed style, larger centered text,
+  a `code?` placeholder, and a submit button that only appears once a code is typed.
+- Moved the copy-link and QR actions above the text area, out of the header.
+- Removed the text area's border and increased its inner padding.
+- Placeholder phrases now type out with a trailing `...` and hold longer before cycling.
+- Hid the theme toggle button (logic kept for a future re-enable).
+- Reorganised `src/` into three layers: `core/` (pure logic, no DOM or Firebase), `data/`
+  (Firestore access) and `ui/` (every module that touches the DOM). `main.ts` drops from 317 to
+  145 lines and now only holds share state and the create/read flows; each UI module owns its own
+  elements. `tests/` mirrors the same layout.
+- Dissolved the catch-all `config.ts`: the ID alphabet moved into `core/id.ts`, the collection name
+  and retry limit became private to `data/snips.ts`, and `core/constants.ts` keeps only the
+  cross-cutting values.
+- Icons now come from the `lucide-static` dependency instead of SVG paths written by hand. A Vite
+  `transformIndexHtml` plugin expands `<i data-lucide="name">` placeholders at build time, so the
+  markup ships as real SVG with no runtime cost, and an unknown icon name fails the build.
+
+### Fixed
+
+- QR popover and the "Copied" tooltip rendering behind the text area on narrow viewports.
+- Lookup field's clear (`×`) and submit buttons not receiving clicks, shadowed by the input
+  after it was restyled with a higher stacking order.
+- Underline reserving space for the submit button even when it was hidden, leaving a visible gap.
+- The QR popover opened empty after reading an existing snip: `showSnip` never rendered a code,
+  and the already-shared short circuit skipped the render path entirely.
+- The lookup field showed its clear and submit buttons after typing a character the mask strips,
+  leaving both visible over an empty field. Button state now syncs after masking, not before.
+- Authored error messages never reached the banner: `showError` only surfaces the text of a
+  `SnipError`, so the clipboard failure notice fell back to the generic wording. A `showMessage`
+  path now carries our own copy while `showError` stays conservative with unknown errors.
+
 ## [1.0.0] - 2026-09-11
 
 First release.
@@ -36,4 +81,5 @@ First release.
 - The TTL policy requires the Blaze plan. On Spark, expired snips stay in storage although they remain inaccessible.
 - A snip cannot be deleted or revoked before it expires.
 
+[1.1.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.1.0
 [1.0.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.0.0

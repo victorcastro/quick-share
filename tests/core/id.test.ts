@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DIGITS, LETTERS } from '../src/config';
-import { generateId, isValidId, normalizeId } from '../src/id';
+import { DIGITS, generateId, isValidId, LETTERS, normalizeId } from '../../src/core/id';
 
 const AMBIGUOUS = ['I', 'l', 'O', 'o'];
 

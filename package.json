@@ -1,7 +1,7 @@
 {
   "name": "quick-snip",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "engines": {
     "node": ">=24"
@@ -22,6 +22,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^22.20.2",
     "eslint": "^10.10.0",
     "globals": "^17.12.0",
     "jsdom": "^30.0.1",

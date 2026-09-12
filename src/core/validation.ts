@@ -1,4 +1,4 @@
-import { MAX_CONTENT_LENGTH } from './config';
+import { MAX_CONTENT_LENGTH } from './constants';
 import { SnipError } from './errors';
 
 export function validateContent(content: string): string {

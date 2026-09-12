@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MAX_CONTENT_LENGTH, MAX_CREATE_RETRIES } from '../src/config';
-import { SnipError } from '../src/errors';
+import { MAX_CONTENT_LENGTH } from '../../src/core/constants';
+import { SnipError } from '../../src/core/errors';
 
 const harness = vi.hoisted(() => {
   class FakeTimestamp {
@@ -71,7 +71,7 @@ const harness = vi.hoisted(() => {
   };
 });
 
-vi.mock('../src/firebase', () => ({ db: {} }));
+vi.mock('../../src/data/firebase', () => ({ db: {} }));
 
 vi.mock('firebase/firestore', () => ({
   doc: harness.doc,
@@ -81,12 +81,12 @@ vi.mock('firebase/firestore', () => ({
   Timestamp: harness.FakeTimestamp,
 }));
 
-vi.mock('../src/id', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../src/id')>();
+vi.mock('../../src/core/id', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../src/core/id')>();
   return { ...actual, generateId: harness.generateId };
 });
 
-const { createSnip, readSnip } = await import('../src/snip');
+const { createSnip, readSnip, MAX_CREATE_RETRIES } = await import('../../src/data/snips');
 
 function seed(id: string, content: string, expiresAt: Date): void {
   harness.store.set(id, {

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { LETTERS } from '../src/config';
-import { isValidId } from '../src/id';
-import { maskCaret, maskId } from '../src/mask';
+import { isValidId, LETTERS } from '../../src/core/id';
+import { maskCaret, maskId } from '../../src/core/mask';
 
 const AMBIGUOUS = ['I', 'l', 'O', 'o'];
 

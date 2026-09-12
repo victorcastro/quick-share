@@ -1,5 +1,4 @@
-import { DIGITS, LETTERS } from './config';
-import { DIGIT_COUNT, LETTER_COUNT } from './id';
+import { DIGIT_COUNT, DIGITS, LETTER_COUNT, LETTERS } from './id';
 
 const SEPARATOR = '-';
 const HASH_PREFIX = '#/';

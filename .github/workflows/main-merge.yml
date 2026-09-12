@@ -1,0 +1,183 @@
+name: Merge Main
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time. cancel-in-progress stays false so a half-finished
+# deploy is never aborted, leaving Pages in a strange state.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  version:
+    name: Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Verify package version and changelog entry
+        env:
+          BASE_SHA: ${{ github.event.before }}
+        run: |
+          BASE_VERSION="$(git show "${BASE_SHA}:package.json" | node -e \
+            "let input = ''; process.stdin.on('data', chunk => input += chunk); process.stdin.on('end', () => console.log(JSON.parse(input).version));")"
+          CURRENT_VERSION="$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")"
+
+          export BASE_VERSION CURRENT_VERSION
+
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+
+          const { BASE_VERSION: baseVersion, CURRENT_VERSION: currentVersion } = process.env;
+          const semverPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/;
+
+          function parseSemver(version, source) {
+            const match = semverPattern.exec(version ?? '');
+            if (!match) {
+              throw new Error(`${source} contains an invalid SemVer version: ${version}`);
+            }
+
+            return {
+              core: match.slice(1, 4).map(Number),
+              prerelease: match[4]?.split('.') ?? [],
+            };
+          }
+
+          function compareIdentifiers(left, right) {
+            const leftIsNumber = /^\d+$/.test(left);
+            const rightIsNumber = /^\d+$/.test(right);
+
+            if (leftIsNumber && rightIsNumber) return Number(left) - Number(right);
+            if (leftIsNumber) return -1;
+            if (rightIsNumber) return 1;
+            return left.localeCompare(right);
+          }
+
+          function compareSemver(left, right) {
+            for (let index = 0; index < left.core.length; index += 1) {
+              if (left.core[index] !== right.core[index]) {
+                return left.core[index] - right.core[index];
+              }
+            }
+
+            if (left.prerelease.length === 0 && right.prerelease.length > 0) return 1;
+            if (left.prerelease.length > 0 && right.prerelease.length === 0) return -1;
+
+            const length = Math.max(left.prerelease.length, right.prerelease.length);
+            for (let index = 0; index < length; index += 1) {
+              if (left.prerelease[index] === undefined) return -1;
+              if (right.prerelease[index] === undefined) return 1;
+
+              const comparison = compareIdentifiers(left.prerelease[index], right.prerelease[index]);
+              if (comparison !== 0) return comparison;
+            }
+
+            return 0;
+          }
+
+          const base = parseSemver(baseVersion, `${process.env.BASE_SHA}/package.json`);
+          const current = parseSemver(currentVersion, 'package.json');
+
+          if (compareSemver(current, base) <= 0) {
+            throw new Error(
+              `package.json version must be greater than ${baseVersion}; received ${currentVersion}.`,
+            );
+          }
+
+          const changelog = readFileSync('CHANGELOG.md', 'utf8');
+          const escapedVersion = currentVersion.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const heading = new RegExp(`^## \\[${escapedVersion}\\](?:\\s+-\\s+\\d{4}-\\d{2}-\\d{2})?\\s*$`, 'm');
+
+          if (!heading.test(changelog)) {
+            throw new Error(`CHANGELOG.md is missing a \"## [${currentVersion}]\" entry.`);
+          }
+
+          console.log(`Version ${currentVersion} is greater than ${baseVersion} and is documented in CHANGELOG.md.`);
+          NODE
+
+  checks:
+    name: Checks
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tests
+        run: npm run test
+
+      # Repository Variables, not Secrets: Vite inlines them into the bundle
+      # regardless. If one is missing, vite.config.ts aborts the build rather
+      # than deploying a broken version.
+      - name: Build
+        env:
+          VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ vars.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ vars.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ vars.VITE_FIREBASE_APP_ID }}
+        run: npm run build
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  tag:
+    name: Tag
+    needs: checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Create version tag
+        run: |
+          VERSION="$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")"
+          TAG="v${VERSION}"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" > /dev/null 2>&1; then
+            echo "::error::Tag ${TAG} already exists."
+            exit 1
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag --annotate "${TAG}" --message "Release ${TAG}"
+          git push origin "${TAG}"
+
+  deploy:
+    name: Deploy
+    needs: tag
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

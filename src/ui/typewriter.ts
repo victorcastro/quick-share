@@ -1,5 +1,5 @@
 export const PLACEHOLDER_PHRASES: readonly string[] = [
-  'Text here...',
+  'Text here',
   'Every snip expires in 10 minutes',
   'No sign-up. No login. Just paste',
   'Codes look like aKxP-428',
@@ -43,8 +43,9 @@ export const PLACEHOLDER_PHRASES: readonly string[] = [
 
 const TYPE_MS = 45;
 const DELETE_MS = 25;
-const HOLD_MS = 1500;
+const HOLD_MS = 2500;
 const PAUSE_MS = 400;
+const ELLIPSIS = '...';
 
 function shuffle<T>(items: readonly T[]): T[] {
   const copy = [...items];
@@ -77,10 +78,11 @@ export function initTypewriter(
   let currentPhrase = nextPhrase();
 
   const tick = (): void => {
+    const full = `${currentPhrase}${ELLIPSIS}`;
     if (!deleting) {
       charIndex += 1;
-      target.placeholder = currentPhrase.slice(0, charIndex);
-      if (charIndex >= currentPhrase.length) {
+      target.placeholder = full.slice(0, charIndex);
+      if (charIndex >= full.length) {
         deleting = true;
         window.setTimeout(tick, HOLD_MS);
         return;
@@ -90,7 +92,7 @@ export function initTypewriter(
     }
 
     charIndex -= 1;
-    target.placeholder = currentPhrase.slice(0, charIndex);
+    target.placeholder = full.slice(0, charIndex);
     if (charIndex <= 0) {
       deleting = false;
       currentPhrase = nextPhrase();
