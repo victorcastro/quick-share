@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
+import { minify } from 'html-minifier-terser';
 import { loadEnv, type Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 
@@ -54,6 +55,26 @@ function lucideIcons(): Plugin {
   };
 }
 
+function minifyHtml(): Plugin {
+  return {
+    name: 'minify-html',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      async handler(html) {
+        return minify(html, {
+          collapseWhitespace: true,
+          minifyCSS: true,
+          minifyJS: true,
+          removeComments: true,
+          removeRedundantAttributes: true,
+          removeEmptyAttributes: true,
+        });
+      },
+    },
+  };
+}
+
 export default defineConfig(({ command, mode }) => {
   if (command === 'build') {
     const env = loadEnv(mode, '.', 'VITE_');
@@ -68,7 +89,7 @@ export default defineConfig(({ command, mode }) => {
 
   return {
     base: './',
-    plugins: [lucideIcons(), tailwindcss()],
+    plugins: [lucideIcons(), tailwindcss(), minifyHtml()],
     test: {
       environment: 'node',
       include: ['tests/**/*.test.ts'],
