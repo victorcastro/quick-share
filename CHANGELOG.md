@@ -9,6 +9,7 @@ Versioning: [SemVer](https://semver.org/).
 
 - The textarea footer hides its character counter in compact layouts while keeping all content
   actions available.
+- Increased the spacing between the main page sections from 16px to 32px.
 
 ## [1.3.0] - 2026-09-12
 
