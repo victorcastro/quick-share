@@ -3,6 +3,14 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.4.1] - 2026-09-12
+
+### Fixed
+
+- Clearing the lookup field now releases the active snip instead of only clearing the URL hash. The
+  expiry countdown stops, the share URL and QR are invalidated and the Firestore listener is
+  detached. The textarea keeps its content as an unshared draft.
+
 ## [1.4.0] - 2026-09-12
 
 ### Added

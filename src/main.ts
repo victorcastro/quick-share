@@ -333,6 +333,14 @@ function handleClearContent(): void {
   focusContent();
 }
 
+function handleClearLookup(): void {
+  clearError();
+  invalidateShare();
+  stopCountdown();
+  clearHash();
+  syncShareButtons();
+}
+
 async function handlePasteIntoLookup(): Promise<void> {
   try {
     pasteIntoLookup(await navigator.clipboard.readText());
@@ -359,7 +367,7 @@ initContentActions({
 });
 initLookupField({
   onSubmit: (rawId) => void openSnip(rawId),
-  onClear: clearHash,
+  onClear: handleClearLookup,
   onPaste: () => void handlePasteIntoLookup(),
 });
 initShareActions({
