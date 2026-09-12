@@ -1,0 +1,142 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  version:
+    name: Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The base branch is needed to compare its package version with the PR.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Verify package version and changelog entry
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          BASE_VERSION="$(git show "origin/${BASE_REF}:package.json" | node -e \
+            "let input = ''; process.stdin.on('data', chunk => input += chunk); process.stdin.on('end', () => console.log(JSON.parse(input).version));")"
+          PR_VERSION="$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")"
+
+          export BASE_VERSION PR_VERSION
+
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+
+          const { BASE_VERSION: baseVersion, PR_VERSION: prVersion } = process.env;
+          const semverPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/;
+
+          function parseSemver(version, source) {
+            const match = semverPattern.exec(version ?? '');
+            if (!match) {
+              throw new Error(`${source} contains an invalid SemVer version: ${version}`);
+            }
+
+            return {
+              core: match.slice(1, 4).map(Number),
+              prerelease: match[4]?.split('.') ?? [],
+            };
+          }
+
+          function compareIdentifiers(left, right) {
+            const leftIsNumber = /^\d+$/.test(left);
+            const rightIsNumber = /^\d+$/.test(right);
+
+            if (leftIsNumber && rightIsNumber) return Number(left) - Number(right);
+            if (leftIsNumber) return -1;
+            if (rightIsNumber) return 1;
+            return left.localeCompare(right);
+          }
+
+          function compareSemver(left, right) {
+            for (let index = 0; index < left.core.length; index += 1) {
+              if (left.core[index] !== right.core[index]) {
+                return left.core[index] - right.core[index];
+              }
+            }
+
+            if (left.prerelease.length === 0 && right.prerelease.length > 0) return 1;
+            if (left.prerelease.length > 0 && right.prerelease.length === 0) return -1;
+
+            const length = Math.max(left.prerelease.length, right.prerelease.length);
+            for (let index = 0; index < length; index += 1) {
+              if (left.prerelease[index] === undefined) return -1;
+              if (right.prerelease[index] === undefined) return 1;
+
+              const comparison = compareIdentifiers(left.prerelease[index], right.prerelease[index]);
+              if (comparison !== 0) return comparison;
+            }
+
+            return 0;
+          }
+
+          const base = parseSemver(baseVersion, `origin/${process.env.BASE_REF}/package.json`);
+          const proposed = parseSemver(prVersion, 'package.json');
+
+          if (compareSemver(proposed, base) <= 0) {
+            throw new Error(
+              `package.json version must be greater than ${baseVersion}; received ${prVersion}.`,
+            );
+          }
+
+          const changelog = readFileSync('CHANGELOG.md', 'utf8');
+          const escapedVersion = prVersion.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const heading = new RegExp(`^## \\[${escapedVersion}\\](?:\\s+-\\s+\\d{4}-\\d{2}-\\d{2})?\\s*$`, 'm');
+
+          if (!heading.test(changelog)) {
+            throw new Error(`CHANGELOG.md is missing a \"## [${prVersion}]\" entry.`);
+          }
+
+          console.log(`Version ${prVersion} is greater than ${baseVersion} and is documented in CHANGELOG.md.`);
+          NODE
+
+  checks:
+    name: Checks
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # npm ci needs a committed package-lock.json and installs exactly what is pinned.
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tests
+        run: npm run test
+
+      # `build` runs tsc --noEmit before bundling, so it validates types too.
+      #
+      # Repository Variables, not Secrets: Vite inlines every VITE_* into the
+      # bundle, so hiding them would be theatre. If one is missing, vite.config.ts
+      # aborts the build rather than publishing a broken version.
+      - name: Build
+        env:
+          VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ vars.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ vars.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ vars.VITE_FIREBASE_APP_ID }}
+        run: npm run build
