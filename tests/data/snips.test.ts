@@ -222,7 +222,7 @@ describe('readSnip', () => {
 
     expect((await readSnip('aKxP428')).content).toBe('secret text');
     expect(
-      (await readSnip('https://victorcastro.github.io/quick-snip/#/aKxP-428')).content,
+      (await readSnip('https://victorcastro.github.io/quick-share/#/aKxP-428')).content,
     ).toBe('secret text');
   });
 

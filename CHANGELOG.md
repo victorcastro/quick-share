@@ -3,6 +3,21 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.3.0] - 2026-09-12
+
+### Added
+
+- An integrated textarea footer shows the character limit on the left and can copy or download the
+  content from the right. Downloads use the active code in the `.txt` filename when present.
+- Clearing the current content now requires confirmation from an anchored popover before resetting
+  the textarea, lookup code and active view. The shared snip remains available until normal expiry.
+
+### Changed
+
+- Renamed the product and its remaining technical identifiers from QuickSnip to QuickShare.
+- Increased the maximum content length from 10,000 to 50,000 characters in both application
+  validation and Firestore security rules.
+
 ## [1.2.0] - 2026-09-12
 
 ### Added
@@ -99,6 +114,7 @@ First release.
 - The TTL policy requires the Blaze plan. On Spark, expired snips stay in storage although they remain inaccessible.
 - A snip cannot be deleted or revoked before it expires.
 
-[1.2.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.2.0
-[1.1.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.1.0
-[1.0.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.0.0
+[1.3.0]: https://github.com/victorcastro/quick-share/releases/tag/v1.3.0
+[1.2.0]: https://github.com/victorcastro/quick-share/releases/tag/v1.2.0
+[1.1.0]: https://github.com/victorcastro/quick-share/releases/tag/v1.1.0
+[1.0.0]: https://github.com/victorcastro/quick-share/releases/tag/v1.0.0

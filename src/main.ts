@@ -4,7 +4,8 @@ import { isSnipError } from './core/errors';
 import { isExpired } from './core/expiration';
 import { createSnip, readSnip, updateSnip, watchSnip, type Snip } from './data/snips';
 import { buildShareUrl, clearHash, readIdFromHash, writeIdToHash } from './routing';
-import { initContentField, readContent, writeContent } from './ui/content-field';
+import { copyContent, downloadContent, initContentActions } from './ui/content-actions';
+import { focusContent, initContentField, readContent, writeContent } from './ui/content-field';
 import { startCountdown, stopCountdown } from './ui/countdown';
 import { clearError, showError, showMessage } from './ui/error-banner';
 import {
@@ -295,6 +296,43 @@ async function handleCopyQrImage(): Promise<void> {
   }
 }
 
+async function handleCopyContent(): Promise<void> {
+  const content = readContent();
+  if (content.length === 0) {
+    return;
+  }
+  try {
+    await copyContent(content);
+  } catch {
+    showMessage('Could not copy the content. Select it and copy it manually instead.');
+  }
+}
+
+function handleDownloadContent(): void {
+  const content = readContent();
+  if (content.length === 0) {
+    return;
+  }
+  const filename = activeSnip === null ? 'quickshare.txt' : `quickshare-${activeSnip.id}.txt`;
+  try {
+    downloadContent(content, filename);
+  } catch {
+    showMessage('Could not download the content. Copy it and save it manually instead.');
+  }
+}
+
+function handleClearContent(): void {
+  clearPendingUpdate();
+  clearError();
+  writeContent('');
+  invalidateShare();
+  stopCountdown();
+  clearHash();
+  setLookupValue('');
+  syncShareButtons();
+  focusContent();
+}
+
 async function handlePasteIntoLookup(): Promise<void> {
   try {
     pasteIntoLookup(await navigator.clipboard.readText());
@@ -314,6 +352,11 @@ function consumeHash(): void {
 
 initTheme();
 initContentField(handleContentChange);
+initContentActions({
+  onCopy: () => void handleCopyContent(),
+  onDownload: handleDownloadContent,
+  onClear: handleClearContent,
+});
 initLookupField({
   onSubmit: (rawId) => void openSnip(rawId),
   onClear: clearHash,

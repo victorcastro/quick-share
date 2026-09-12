@@ -42,8 +42,8 @@ describe('maskId', () => {
   });
 
   it('pulls the id out of a pasted share URL', () => {
-    expect(maskId('https://quicksnip.app/#/aKxP-428')).toBe('aKxP-428');
-    expect(maskId('  https://quicksnip.app/#/aKxP-428  ')).toBe('aKxP-428');
+    expect(maskId('https://quickshare.app/#/aKxP-428')).toBe('aKxP-428');
+    expect(maskId('  https://quickshare.app/#/aKxP-428  ')).toBe('aKxP-428');
   });
 
   it('preserves case, since ids are case sensitive', () => {

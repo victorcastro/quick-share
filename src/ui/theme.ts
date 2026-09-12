@@ -2,7 +2,7 @@ import { requireElement } from './dom';
 
 export type Theme = 'light' | 'dark';
 
-export const THEME_STORAGE_KEY = 'quicksnip:theme';
+export const THEME_STORAGE_KEY = 'quickshare:theme';
 
 function readStoredTheme(): Theme | null {
   try {
