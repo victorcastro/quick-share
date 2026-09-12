@@ -3,6 +3,20 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.5.0] - 2026-09-12
+
+### Added
+
+- Local history of the snips created on this device, shown as a stack of cards pinned to the corner
+  of the viewport. The cards never dismiss themselves: each one shows the code, the time left and
+  buttons to copy the code, share the link and open its QR, and a snip that expires stays on the
+  stack marked "Expired" with its actions disabled. The last 5 snips are kept, ordered by expiry
+  with the most recent first, and only the code and the expiry timestamp are stored in
+  `localStorage` - never the content.
+- Floating "Show recent" badge, always visible in the corner, that folds the history stack away and
+  brings the last 5 cards back, carrying the number of stored snips. Creating a link opens the
+  stack, and the folded or unfolded state survives a reload.
+
 ## [1.4.1] - 2026-09-12
 
 ### Added

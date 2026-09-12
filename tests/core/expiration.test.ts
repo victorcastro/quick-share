@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { TTL_MINUTES } from '../../src/core/constants';
-import { computeExpiresAt, isExpired, msUntilExpiry } from '../../src/core/expiration';
+import {
+  computeExpiresAt,
+  formatRemaining,
+  isExpired,
+  msUntilExpiry,
+} from '../../src/core/expiration';
 
 const now = new Date('2026-09-11T12:00:00.000Z');
 
@@ -40,5 +45,23 @@ describe('msUntilExpiry', () => {
 
   it('never returns a negative value', () => {
     expect(msUntilExpiry(expiresAt, new Date(expiresAt.getTime() + 5_000))).toBe(0);
+  });
+});
+
+describe('formatRemaining', () => {
+  it('formats zero as 0:00', () => {
+    expect(formatRemaining(0)).toBe('0:00');
+  });
+
+  it('pads the seconds', () => {
+    expect(formatRemaining(9_000)).toBe('0:09');
+  });
+
+  it('rounds partial seconds up', () => {
+    expect(formatRemaining(1)).toBe('0:01');
+  });
+
+  it('formats the full TTL', () => {
+    expect(formatRemaining(10 * 60_000)).toBe('10:00');
   });
 });
