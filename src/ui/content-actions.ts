@@ -3,6 +3,7 @@ import { requireElement, setText } from './dom';
 const COPY_SUCCESS_DURATION_MS = 1500;
 const MESSAGE_DURATION_MS = 2000;
 
+const contentActions = requireElement('content-actions', HTMLElement);
 const contentActionMessage = requireElement('content-action-message', HTMLElement);
 const copyContentButton = requireElement('copy-content', HTMLButtonElement);
 const clearContentButton = requireElement('clear-content', HTMLButtonElement);
@@ -14,6 +15,7 @@ let successTimer: number | undefined;
 let messageTimer: number | undefined;
 
 export function setContentActionsEnabled(enabled: boolean): void {
+  contentActions.hidden = !enabled;
   copyContentButton.disabled = !enabled;
   clearContentButton.disabled = !enabled;
   if (!enabled) {

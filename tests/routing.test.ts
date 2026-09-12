@@ -4,7 +4,7 @@ import { buildShareUrl, clearHash, readIdFromHash, writeIdToHash } from '../src/
 
 const pagesLocation = {
   origin: 'https://victorcastro.github.io',
-  pathname: '/quick-snip/',
+  pathname: '/quick-share/',
 };
 
 describe('readIdFromHash', () => {
@@ -39,7 +39,7 @@ describe('readIdFromHash', () => {
 describe('buildShareUrl', () => {
   it('builds from location, with no hardcoded domain', () => {
     expect(buildShareUrl('aKxP-428', pagesLocation)).toBe(
-      'https://victorcastro.github.io/quick-snip/#/aKxP-428',
+      'https://victorcastro.github.io/quick-share/#/aKxP-428',
     );
   });
 

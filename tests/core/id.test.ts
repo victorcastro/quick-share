@@ -88,7 +88,7 @@ describe('normalizeId', () => {
   });
 
   it('extracts the ID from a pasted full URL', () => {
-    expect(normalizeId('https://victorcastro.github.io/quick-snip/#/aKxP-428')).toBe('aKxP-428');
+    expect(normalizeId('https://victorcastro.github.io/quick-share/#/aKxP-428')).toBe('aKxP-428');
   });
 
   it('leaves unrecognised input alone so isValidId can reject it', () => {
