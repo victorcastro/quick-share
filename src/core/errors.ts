@@ -11,10 +11,10 @@ const MESSAGES: Record<SnipErrorCode, string> = {
   'empty-content': 'The content is empty.',
   'content-too-large': 'The content exceeds the maximum allowed size.',
   'invalid-id': 'The code does not match the LLLL-NNN format.',
-  'not-found': 'No QuickSnip exists with that code.',
-  expired: 'This QuickSnip has expired.',
+  'not-found': 'No QuickShare exists with that code.',
+  expired: 'This QuickShare has expired.',
   'collision-limit':
-    'Could not create the QuickSnip. This may be a run of ID collisions, ' +
+    'Could not create the QuickShare. This may be a run of ID collisions, ' +
     'misdeployed Firestore rules, or a device clock that is out of sync.',
   unavailable: 'Could not reach the server.',
 };

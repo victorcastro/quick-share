@@ -3,6 +3,24 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.2.0] - 2026-09-12
+
+### Added
+
+- Active snips now save text edits to the same Firestore document after a short debounce and
+  stream remote changes to other clients viewing the link.
+- A dedicated new-link action creates a fresh ID when the author explicitly wants to stop editing
+  the current link, with an inline confirmation before switching.
+- QR codes can be copied to the clipboard as PNG images directly from the QR popover.
+
+### Changed
+
+- Firestore rules allow content-only updates to live snips while keeping their creation and expiry
+  timestamps immutable. Editing never extends the original lifetime.
+- Refreshed the animated textarea placeholder with 40 short prompts about quick, temporary sharing,
+  including `Paste it. Share it. Done...`, `Paste it, then send the QR...`, and
+  `Ten minutes to pass it on...`. Typing is now slower while deletion keeps its original speed.
+
 ## [1.1.0] - 2026-09-12
 
 ### Added
@@ -81,5 +99,6 @@ First release.
 - The TTL policy requires the Blaze plan. On Spark, expired snips stay in storage although they remain inaccessible.
 - A snip cannot be deleted or revoked before it expires.
 
+[1.2.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.2.0
 [1.1.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.1.0
 [1.0.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.0.0

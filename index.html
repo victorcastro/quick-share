@@ -9,7 +9,7 @@
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%237aa2f7'/%3E%3Cpath d='M9 12h14M9 16h14M9 20h8' stroke='%230b0c0e' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E"
     />
-    <title>QuickSnip</title>
+    <title>Quick Share</title>
     <script>
       (function () {
         try {
@@ -27,8 +27,8 @@
     <main class="mx-auto flex w-full max-w-[620px] flex-col gap-4 lg:max-w-[980px] sm:min-h-[calc(100vh-4.5rem)]">
       <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 class="text-2xl font-semibold tracking-tight">QuickSnip</h1>
-          <p class="mt-0.5 text-sm text-muted">Paste & Share</p>
+          <h1 class="text-2xl font-semibold tracking-tight">Quick Share</h1>
+          <p class="mt-0.5 text-sm text-muted">Easy to paste and share</p>
         </div>
 
         <div id="lookup-field" class="relative w-full sm:w-56">
@@ -94,7 +94,14 @@
 
         <section class="flex flex-col gap-3">
           <div class="flex flex-col items-end gap-2">
-            <div class="flex items-center justify-end gap-2">
+            <div class="flex w-full items-center gap-3">
+              <p
+                id="action-message"
+                class="min-w-0 flex-1 text-right text-sm text-muted"
+                role="status"
+                aria-live="polite"
+              ></p>
+              <div class="flex shrink-0 items-center justify-end gap-2">
               <button
                 id="theme-toggle"
                 type="button"
@@ -106,44 +113,104 @@
                 <i data-lucide="moon" class="hidden size-4 dark:block" aria-hidden="true"></i>
               </button>
 
+              <div id="new-link-action" class="relative" hidden>
+                <button
+                  id="new-link"
+                  type="button"
+                  class="group relative flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border-subtle bg-surface text-muted transition-colors hover:border-border-strong hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
+                  aria-label="Create new link"
+                  aria-haspopup="dialog"
+                  aria-expanded="false"
+                >
+                  <i data-lucide="file-plus-2" data-icon class="size-4" aria-hidden="true"></i>
+                  <i data-lucide="loader-circle" data-spinner class="size-4 animate-spin" aria-hidden="true"></i>
+                  <span
+                    class="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1.5 -translate-x-1/2 rounded-full bg-text px-2 py-1 text-xs whitespace-nowrap text-bg opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+                    aria-hidden="true"
+                  >
+                    New link
+                  </span>
+                </button>
+                <div
+                  id="new-link-confirm"
+                  class="absolute top-full right-0 z-30 mt-2 w-64 rounded-2xl border border-border-subtle bg-surface p-3 shadow-lg"
+                  role="dialog"
+                  aria-label="Confirm new link"
+                  hidden
+                >
+                  <p class="text-sm text-text">Create a new link and stop updating the current one?</p>
+                  <div class="mt-3 flex justify-end gap-2">
+                    <button
+                      id="new-link-cancel"
+                      type="button"
+                      class="cursor-pointer rounded-full px-3 py-1.5 text-xs text-muted transition-colors hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      id="new-link-confirm-button"
+                      type="button"
+                      class="cursor-pointer rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-ink transition-colors hover:bg-accent-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    >
+                      New link
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <div class="relative">
                 <button
                   id="copy"
                   type="button"
-                  class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border-subtle bg-surface text-muted transition-colors hover:border-border-strong hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
+                  class="group flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border-subtle bg-surface text-muted transition-colors hover:border-border-strong hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
                   aria-label="Copy share link"
-                  title="Copy share link"
                 >
                   <i data-lucide="link" data-icon class="size-4" aria-hidden="true"></i>
+                  <i data-lucide="check" data-success class="size-4" aria-hidden="true"></i>
                   <i data-lucide="loader-circle" data-spinner class="size-4 animate-spin" aria-hidden="true"></i>
+                  <span
+                    class="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1.5 -translate-x-1/2 rounded-full bg-text px-2 py-1 text-xs whitespace-nowrap text-bg opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+                    aria-hidden="true"
+                  >
+                    Share link
+                  </span>
                 </button>
-                <span
-                  id="copy-feedback"
-                  class="pointer-events-none absolute top-full left-1/2 z-20 mt-1.5 -translate-x-1/2 rounded-full bg-text px-2 py-1 text-xs whitespace-nowrap text-bg opacity-0 transition-opacity"
-                >
-                  Copied
-                </span>
               </div>
 
               <div class="relative">
                 <button
                   id="qr-toggle"
                   type="button"
-                  class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border-subtle bg-surface text-muted transition-colors hover:border-border-strong hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
+                  class="group flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border-subtle bg-surface text-muted transition-colors hover:border-border-strong hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
                   aria-label="Show QR code"
-                  title="Show QR code"
                 >
                   <i data-lucide="qr-code" data-icon class="size-4" aria-hidden="true"></i>
+                  <i data-lucide="check" data-success class="size-4" aria-hidden="true"></i>
                   <i data-lucide="loader-circle" data-spinner class="size-4 animate-spin" aria-hidden="true"></i>
+                  <span
+                    class="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1.5 -translate-x-1/2 rounded-full bg-text px-2 py-1 text-xs whitespace-nowrap text-bg opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+                    aria-hidden="true"
+                  >
+                    Show QR
+                  </span>
                 </button>
                 <div
                   id="qr-popover"
-                  class="absolute top-full right-0 z-20 mt-2 w-[150px] rounded-2xl border border-border-subtle bg-surface p-3 shadow-lg"
+                  class="absolute top-full right-0 z-20 mt-2 w-[170px] rounded-2xl border border-border-subtle bg-surface p-3 shadow-lg"
                   hidden
                 >
                   <div id="result-qr" class="qr"></div>
+                  <button
+                    id="copy-qr-image"
+                    type="button"
+                    class="mt-2 w-full cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-surface-2 hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-wait disabled:opacity-50"
+                    disabled
+                  >
+                    Copy QR image
+                  </button>
                 </div>
               </div>
+            </div>
             </div>
             <p id="result-countdown" class="countdown text-right"></p>
           </div>

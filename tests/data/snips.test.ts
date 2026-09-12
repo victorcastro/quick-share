@@ -14,6 +14,7 @@ const harness = vi.hoisted(() => {
   }
 
   const store = new Map<string, Record<string, unknown>>();
+  const listeners = new Map<string, Set<(snapshot: ReturnType<typeof snapshotFor>) => void>>();
   const idQueue: string[] = [];
   let idCounter = 0;
   let denyEveryWrite = false;
@@ -29,6 +30,20 @@ const harness = vi.hoisted(() => {
 
   const doc = vi.fn((_db: unknown, _collection: string, id: string) => ({ id }));
 
+  function snapshotFor(id: string) {
+    const data = store.get(id);
+    return {
+      exists: () => data !== undefined,
+      data: () => data,
+    };
+  }
+
+  function notify(id: string): void {
+    for (const listener of listeners.get(id) ?? []) {
+      listener(snapshotFor(id));
+    }
+  }
+
   const setDoc = vi.fn((ref: { id: string }, data: Record<string, unknown>) => {
     if (denyEveryWrite || store.has(ref.id)) {
       return Promise.reject(Object.assign(new Error('PERMISSION_DENIED'), {
@@ -40,12 +55,33 @@ const harness = vi.hoisted(() => {
   });
 
   const getDoc = vi.fn((ref: { id: string }) => {
-    const data = store.get(ref.id);
-    return Promise.resolve({
-      exists: () => data !== undefined,
-      data: () => data,
-    });
+    return Promise.resolve(snapshotFor(ref.id));
   });
+
+  const updateDoc = vi.fn((ref: { id: string }, data: Record<string, unknown>) => {
+    const existing = store.get(ref.id);
+    if (denyEveryWrite || existing === undefined) {
+      return Promise.reject(Object.assign(new Error('PERMISSION_DENIED'), {
+        code: 'permission-denied',
+      }));
+    }
+    store.set(ref.id, { ...existing, ...data });
+    notify(ref.id);
+    return Promise.resolve();
+  });
+
+  const onSnapshot = vi.fn(
+    (
+      ref: { id: string },
+      onChange: (snapshot: ReturnType<typeof snapshotFor>) => void,
+    ) => {
+      const callbacks = listeners.get(ref.id) ?? new Set();
+      callbacks.add(onChange);
+      listeners.set(ref.id, callbacks);
+      onChange(snapshotFor(ref.id));
+      return () => callbacks.delete(onChange);
+    },
+  );
 
   const serverTimestamp = vi.fn(() => 'SERVER_TIMESTAMP');
 
@@ -55,7 +91,9 @@ const harness = vi.hoisted(() => {
     idQueue,
     doc,
     setDoc,
+    updateDoc,
     getDoc,
+    onSnapshot,
     serverTimestamp,
     generateId,
     reset(): void {
@@ -63,6 +101,7 @@ const harness = vi.hoisted(() => {
       idQueue.length = 0;
       idCounter = 0;
       denyEveryWrite = false;
+      listeners.clear();
       vi.clearAllMocks();
     },
     denyAllWrites(): void {
@@ -76,7 +115,9 @@ vi.mock('../../src/data/firebase', () => ({ db: {} }));
 vi.mock('firebase/firestore', () => ({
   doc: harness.doc,
   setDoc: harness.setDoc,
+  updateDoc: harness.updateDoc,
   getDoc: harness.getDoc,
+  onSnapshot: harness.onSnapshot,
   serverTimestamp: harness.serverTimestamp,
   Timestamp: harness.FakeTimestamp,
 }));
@@ -86,7 +127,9 @@ vi.mock('../../src/core/id', async (importOriginal) => {
   return { ...actual, generateId: harness.generateId };
 });
 
-const { createSnip, readSnip, MAX_CREATE_RETRIES } = await import('../../src/data/snips');
+const { createSnip, readSnip, updateSnip, watchSnip, MAX_CREATE_RETRIES } = await import(
+  '../../src/data/snips'
+);
 
 function seed(id: string, content: string, expiresAt: Date): void {
   harness.store.set(id, {
@@ -228,5 +271,50 @@ describe('readSnip', () => {
     harness.getDoc.mockRejectedValueOnce(new Error('offline'));
 
     expect(await codeOf(() => readSnip('aKxP-428'))).toBe('unavailable');
+  });
+});
+
+describe('updateSnip', () => {
+  it('updates only the content of an existing snip', async () => {
+    const expiresAt = inMinutes(5);
+    seed('aKxP-428', 'original', expiresAt);
+
+    await updateSnip('aKxP-428', 'updated');
+
+    expect(harness.updateDoc).toHaveBeenCalledWith({ id: 'aKxP-428' }, { content: 'updated' });
+    expect(harness.store.get('aKxP-428')).toEqual({
+      content: 'updated',
+      createdAt: 'SERVER_TIMESTAMP',
+      expiresAt: harness.FakeTimestamp.fromDate(expiresAt),
+    });
+  });
+
+  it('validates content before updating Firestore', async () => {
+    seed('aKxP-428', 'original', inMinutes(5));
+
+    expect(await codeOf(() => updateSnip('aKxP-428', '   '))).toBe('empty-content');
+    expect(harness.updateDoc).not.toHaveBeenCalled();
+  });
+
+  it('maps a denied update to expired', async () => {
+    expect(await codeOf(() => updateSnip('aKxP-428', 'updated'))).toBe('expired');
+  });
+});
+
+describe('watchSnip', () => {
+  it('emits the current value and subsequent content updates', async () => {
+    seed('aKxP-428', 'original', inMinutes(5));
+    const values: string[] = [];
+    const stop = watchSnip(
+      'aKxP-428',
+      (snip) => values.push(snip.content),
+      () => undefined,
+    );
+
+    await updateSnip('aKxP-428', 'updated');
+    stop();
+    await updateSnip('aKxP-428', 'ignored');
+
+    expect(values).toEqual(['original', 'updated']);
   });
 });

@@ -16,7 +16,7 @@ export function readContent(): string {
   return contentInput.value;
 }
 
-export function refreshContentField(): void {
+export function refreshContentField(notify = true): void {
   const overLimit = contentInput.value.length > MAX_CONTENT_LENGTH;
 
   contentInput.classList.toggle('is-invalid', overLimit);
@@ -31,16 +31,18 @@ export function refreshContentField(): void {
   }
 
   grow();
-  notifyChange();
+  if (notify) {
+    notifyChange();
+  }
 }
 
 export function writeContent(value: string): void {
   contentInput.value = value;
-  refreshContentField();
+  refreshContentField(false);
 }
 
 export function initContentField(onChange: () => void): void {
   notifyChange = onChange;
-  contentInput.addEventListener('input', refreshContentField);
+  contentInput.addEventListener('input', () => refreshContentField());
   initTypewriter(contentInput);
 }
