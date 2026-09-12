@@ -3,6 +3,15 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.4.0] - 2026-09-12
+
+### Added
+
+- Firebase App Check with the reCAPTCHA v3 provider attests every Firestore request as coming from
+  the web app. The site key is read from `VITE_RECAPTCHA_SITE_KEY`, and `VITE_APPCHECK_DEBUG_TOKEN`
+  registers a debug token in development only. Enforcement for Cloud Firestore is configured in the
+  Firebase console.
+
 ## [1.3.2] - 2026-09-12
 
 ### Changed
