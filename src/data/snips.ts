@@ -1,10 +1,13 @@
 import { doc, getDoc, serverTimestamp, setDoc, Timestamp } from 'firebase/firestore';
-import { COLLECTION, MAX_CREATE_RETRIES } from './config';
-import { SnipError } from './errors';
-import { computeExpiresAt, isExpired } from './expiration';
+import { SnipError } from '../core/errors';
+import { computeExpiresAt, isExpired } from '../core/expiration';
+import { generateId, isValidId, normalizeId } from '../core/id';
+import { validateContent } from '../core/validation';
 import { db } from './firebase';
-import { generateId, isValidId, normalizeId } from './id';
-import { validateContent } from './validation';
+
+export const MAX_CREATE_RETRIES = 5;
+
+const COLLECTION = 'snips';
 
 export interface Snip {
   id: string;

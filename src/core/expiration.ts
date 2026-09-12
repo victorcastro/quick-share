@@ -1,4 +1,4 @@
-import { TTL_MINUTES } from './config';
+import { TTL_MINUTES } from './constants';
 
 const MS_PER_MINUTE = 60_000;
 

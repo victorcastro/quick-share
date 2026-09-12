@@ -3,6 +3,25 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.1.1] - 2026-09-12
+
+### Fixed
+
+- The QR popover opened empty after reading an existing snip: `showSnip` never rendered a code,
+  and the already-shared short circuit skipped the render path entirely.
+- The lookup field showed its clear and submit buttons after typing a character the mask strips,
+  leaving both visible over an empty field. Button state now syncs after masking, not before.
+
+### Changed
+
+- Reorganised `src/` into three layers: `core/` (pure logic, no DOM or Firebase), `data/`
+  (Firestore access) and `ui/` (every module that touches the DOM). `main.ts` drops from 317 to
+  145 lines and now only holds share state and the create/read flows; each UI module owns its own
+  elements. `tests/` mirrors the same layout.
+- Dissolved the catch-all `config.ts`: the ID alphabet moved into `core/id.ts`, the collection name
+  and retry limit became private to `data/snips.ts`, and `core/constants.ts` keeps only the
+  cross-cutting values.
+
 ## [1.1.0] - 2026-09-12
 
 ### Changed
@@ -54,5 +73,6 @@ First release.
 - The TTL policy requires the Blaze plan. On Spark, expired snips stay in storage although they remain inaccessible.
 - A snip cannot be deleted or revoked before it expires.
 
+[1.1.1]: https://github.com/victorcastro/quick-snip/releases/tag/v1.1.1
 [1.1.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.1.0
 [1.0.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.0.0

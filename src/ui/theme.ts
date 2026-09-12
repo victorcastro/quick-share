@@ -1,3 +1,5 @@
+import { requireElement } from './dom';
+
 export type Theme = 'light' | 'dark';
 
 export const THEME_STORAGE_KEY = 'quicksnip:theme';
@@ -27,7 +29,9 @@ export function activeTheme(): Theme {
   return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
 }
 
-export function initTheme(toggle: HTMLButtonElement): void {
+export function initTheme(): void {
+  const toggle = requireElement('theme-toggle', HTMLButtonElement);
+
   const sync = (): void => {
     const next = activeTheme() === 'dark' ? 'light' : 'dark';
     toggle.setAttribute('aria-label', `Switch to ${next} theme`);

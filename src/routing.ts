@@ -1,4 +1,4 @@
-import { isValidId, normalizeId } from './id';
+import { isValidId, normalizeId } from './core/id';
 
 const HASH_PREFIX = '#/';
 

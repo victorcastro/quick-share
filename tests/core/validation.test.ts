@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { MAX_CONTENT_LENGTH } from '../src/config';
-import { SnipError } from '../src/errors';
-import { validateContent } from '../src/validation';
+import { MAX_CONTENT_LENGTH } from '../../src/core/constants';
+import { SnipError } from '../../src/core/errors';
+import { validateContent } from '../../src/core/validation';
 
 function codeOf(fn: () => unknown): string {
   try {

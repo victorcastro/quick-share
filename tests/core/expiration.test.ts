@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { TTL_MINUTES } from '../src/config';
-import { computeExpiresAt, isExpired, msUntilExpiry } from '../src/expiration';
+import { TTL_MINUTES } from '../../src/core/constants';
+import { computeExpiresAt, isExpired, msUntilExpiry } from '../../src/core/expiration';
 
 const now = new Date('2026-09-11T12:00:00.000Z');
 

@@ -1,9 +1,12 @@
-import { DIGITS, LETTERS } from './config';
+export const LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz';
 
-export const ID_PATTERN = new RegExp(`^[${LETTERS}]{4}-[${DIGITS}]{3}$`);
+export const DIGITS = '0123456789';
 
 export const LETTER_COUNT = 4;
+
 export const DIGIT_COUNT = 3;
+
+export const ID_PATTERN = new RegExp(`^[${LETTERS}]{4}-[${DIGITS}]{3}$`);
 
 function randomIndex(size: number): number {
   const limit = Math.floor(256 / size) * size;
