@@ -17,7 +17,7 @@
   --accent-strong: #215900;
   --accent-ink: #ffffff;
   --accent-soft: rgb(65 119 31 / 0.16);
-  --accent-glow: rgb(65 119 31 / 0.14);
+  --accent-glow: rgb(255 255 255 / 0.45);
   --danger: #c8384f;
   --danger-bg: rgb(200 56 79 / 0.08);
   --danger-border: rgb(200 56 79 / 0.26);
@@ -40,7 +40,7 @@
   --accent-strong: #cff6b3;
   --accent-ink: #0b0c0e;
   --accent-soft: rgb(174 212 147 / 0.18);
-  --accent-glow: rgb(174 212 147 / 0.16);
+  --accent-glow: rgb(255 255 255 / 0.12);
   --danger: #f7768e;
   --danger-bg: rgb(247 118 142 / 0.1);
   --danger-border: rgb(247 118 142 / 0.28);

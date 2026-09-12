@@ -3,6 +3,19 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.3.1] - 2026-09-12
+
+### Changed
+
+- The textarea footer hides its character counter in compact layouts while keeping all content
+  actions available.
+- Increased the spacing between the main page sections from 16px to 32px.
+- Arranged the QuickShare brand and code lookup side by side in compact layouts, using a narrower
+  lookup field that occupies half the available width and smaller compact typography while keeping
+  the rest of the page in its normal vertical flow.
+- Gave the compact brand block the matching half-width column for a balanced header layout.
+- Increased the central textarea background glow and changed it from green to white in both themes.
+
 ## [1.3.0] - 2026-09-12
 
 ### Added
@@ -114,6 +127,7 @@ First release.
 - The TTL policy requires the Blaze plan. On Spark, expired snips stay in storage although they remain inaccessible.
 - A snip cannot be deleted or revoked before it expires.
 
+[1.3.1]: https://github.com/victorcastro/quick-share/releases/tag/v1.3.1
 [1.3.0]: https://github.com/victorcastro/quick-share/releases/tag/v1.3.0
 [1.2.0]: https://github.com/victorcastro/quick-share/releases/tag/v1.2.0
 [1.1.0]: https://github.com/victorcastro/quick-share/releases/tag/v1.1.0
