@@ -110,6 +110,23 @@
   display: none !important;
 }
 
+[data-spinner] {
+  display: none;
+}
+
+.is-busy > [data-icon] {
+  display: none;
+}
+
+.is-busy > [data-spinner] {
+  display: block;
+}
+
+.is-busy:disabled {
+  cursor: wait;
+  opacity: 1;
+}
+
 #lookup-field:has(> #read:not([hidden])) > #lookup {
   padding-right: 2.5rem;
 }
@@ -165,5 +182,9 @@ textarea.is-invalid:focus-visible {
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+  }
+
+  [data-spinner] {
+    animation-duration: 1.5s !important;
   }
 }

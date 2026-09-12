@@ -11,9 +11,28 @@ const qrHost = requireElement('result-qr', HTMLElement);
 
 let feedbackTimer: number | undefined;
 
+export type ShareAction = 'copy' | 'qr';
+
+const BUTTONS: ReadonlyArray<readonly [ShareAction, HTMLButtonElement]> = [
+  ['copy', copyButton],
+  ['qr', qrToggle],
+];
+
 export function setShareEnabled(enabled: boolean): void {
   copyButton.disabled = !enabled;
   qrToggle.disabled = !enabled;
+}
+
+export function setShareBusy(action: ShareAction | null): void {
+  for (const [name, button] of BUTTONS) {
+    const busy = name === action;
+    button.classList.toggle('is-busy', busy);
+    if (busy) {
+      button.setAttribute('aria-busy', 'true');
+    } else {
+      button.removeAttribute('aria-busy');
+    }
+  }
 }
 
 export function renderQrCode(url: string): void {

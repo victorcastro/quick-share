@@ -18,7 +18,9 @@ import {
   isQrPopoverOpen,
   renderQrCode,
   setQrPopoverOpen,
+  setShareBusy,
   setShareEnabled,
+  type ShareAction,
 } from './ui/share-actions';
 import { initTheme } from './ui/theme';
 
@@ -61,13 +63,14 @@ function showSnip(snip: Snip): void {
   });
 }
 
-async function ensureShared(): Promise<boolean> {
+async function ensureShared(action: ShareAction): Promise<boolean> {
   if (hasFreshShare()) {
     return true;
   }
 
   clearError();
   isCreating = true;
+  setShareBusy(action);
   syncShareButtons();
   try {
     showCreated(await createSnip(readContent()));
@@ -77,6 +80,7 @@ async function ensureShared(): Promise<boolean> {
     return false;
   } finally {
     isCreating = false;
+    setShareBusy(null);
     syncShareButtons();
   }
 }
@@ -101,7 +105,7 @@ async function openSnip(rawId: string): Promise<void> {
 }
 
 async function handleCopy(): Promise<void> {
-  if (!(await ensureShared())) {
+  if (!(await ensureShared('copy'))) {
     return;
   }
   try {
@@ -113,7 +117,7 @@ async function handleCopy(): Promise<void> {
 
 async function handleQr(): Promise<void> {
   const wasShared = hasFreshShare();
-  if (!(await ensureShared())) {
+  if (!(await ensureShared('qr'))) {
     return;
   }
   setQrPopoverOpen(wasShared ? !isQrPopoverOpen() : true);
