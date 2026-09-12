@@ -14,9 +14,8 @@ Versioning: [SemVer](https://semver.org/).
   with the most recent first, and only the code and the expiry timestamp are stored in
   `localStorage` - never the content.
 - Floating "Show recent" badge, always visible in the corner, that folds the history stack away and
-  brings the last 5 cards back, carrying the number of stored snips. With an empty history it reads
-  0 and opens to "No links yet". Creating a link opens the stack, and the folded or unfolded state
-  survives a reload.
+  brings the last 5 cards back, carrying the number of stored snips. Creating a link opens the
+  stack, and the folded or unfolded state survives a reload.
 
 ## [1.4.1] - 2026-09-12
 

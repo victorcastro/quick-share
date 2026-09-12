@@ -13,7 +13,6 @@ export const HISTORY_OPEN_STORAGE_KEY = 'quickshare:history-open';
 
 const list = requireElement('history-list', HTMLElement);
 const template = requireElement('history-card', HTMLTemplateElement);
-const empty = requireElement('history-empty', HTMLElement);
 const toggle = requireElement('history-toggle', HTMLButtonElement);
 const toggleLabel = requireElement('history-toggle-label', HTMLElement);
 const count = requireElement('history-count', HTMLElement);
@@ -69,7 +68,6 @@ function setQrOpen(card: HTMLElement, open: boolean): void {
 
 function syncToggle(): void {
   list.hidden = !isOpen;
-  empty.hidden = !isOpen || cards.size > 0;
   toggle.setAttribute('aria-expanded', String(isOpen));
   setText(toggleLabel, isOpen ? 'Hide recent' : 'Show recent');
   setText(count, String(cards.size));
