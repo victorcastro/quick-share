@@ -6,6 +6,7 @@ const MESSAGE_DURATION_MS = 2000;
 const contentActions = requireElement('content-actions', HTMLElement);
 const contentActionMessage = requireElement('content-action-message', HTMLElement);
 const copyContentButton = requireElement('copy-content', HTMLButtonElement);
+const downloadContentButton = requireElement('download-content', HTMLButtonElement);
 const clearContentButton = requireElement('clear-content', HTMLButtonElement);
 const clearContentConfirm = requireElement('clear-content-confirm', HTMLElement);
 const clearContentConfirmButton = requireElement('clear-content-confirm-button', HTMLButtonElement);
@@ -17,6 +18,7 @@ let messageTimer: number | undefined;
 export function setContentActionsEnabled(enabled: boolean): void {
   contentActions.hidden = !enabled;
   copyContentButton.disabled = !enabled;
+  downloadContentButton.disabled = !enabled;
   clearContentButton.disabled = !enabled;
   if (!enabled) {
     setClearConfirmationOpen(false);
@@ -32,6 +34,14 @@ function setClearConfirmationOpen(open: boolean): void {
   clearContentButton.setAttribute('aria-expanded', String(open));
 }
 
+function showContentActionMessage(message: string): void {
+  window.clearTimeout(messageTimer);
+  setText(contentActionMessage, message);
+  messageTimer = window.setTimeout(() => {
+    setText(contentActionMessage, '');
+  }, MESSAGE_DURATION_MS);
+}
+
 export async function copyContent(content: string): Promise<void> {
   await navigator.clipboard.writeText(content);
   window.clearTimeout(successTimer);
@@ -39,24 +49,39 @@ export async function copyContent(content: string): Promise<void> {
   copyContentButton.classList.remove('is-success');
   void copyContentButton.offsetWidth;
   copyContentButton.classList.add('is-success');
-  setText(contentActionMessage, 'Content copied');
+  showContentActionMessage('Content copied');
   successTimer = window.setTimeout(() => {
     copyContentButton.classList.remove('is-success');
   }, COPY_SUCCESS_DURATION_MS);
-  messageTimer = window.setTimeout(() => {
-    setText(contentActionMessage, '');
-  }, MESSAGE_DURATION_MS);
+}
+
+export function downloadContent(content: string, filename: string): void {
+  const url = URL.createObjectURL(new Blob([content], { type: 'text/plain;charset=utf-8' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.hidden = true;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+  showContentActionMessage('Content downloaded');
 }
 
 export interface ContentActionHandlers {
   onCopy: () => void;
+  onDownload: () => void;
   onClear: () => void;
 }
 
-export function initContentActions({ onCopy, onClear }: ContentActionHandlers): void {
+export function initContentActions({ onCopy, onDownload, onClear }: ContentActionHandlers): void {
   copyContentButton.addEventListener('click', () => {
     setClearConfirmationOpen(false);
     onCopy();
+  });
+  downloadContentButton.addEventListener('click', () => {
+    setClearConfirmationOpen(false);
+    onDownload();
   });
   clearContentButton.addEventListener('click', () => {
     setClearConfirmationOpen(!isClearConfirmationOpen());

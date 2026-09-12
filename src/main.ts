@@ -4,7 +4,7 @@ import { isSnipError } from './core/errors';
 import { isExpired } from './core/expiration';
 import { createSnip, readSnip, updateSnip, watchSnip, type Snip } from './data/snips';
 import { buildShareUrl, clearHash, readIdFromHash, writeIdToHash } from './routing';
-import { copyContent, initContentActions } from './ui/content-actions';
+import { copyContent, downloadContent, initContentActions } from './ui/content-actions';
 import { focusContent, initContentField, readContent, writeContent } from './ui/content-field';
 import { startCountdown, stopCountdown } from './ui/countdown';
 import { clearError, showError, showMessage } from './ui/error-banner';
@@ -308,6 +308,19 @@ async function handleCopyContent(): Promise<void> {
   }
 }
 
+function handleDownloadContent(): void {
+  const content = readContent();
+  if (content.length === 0) {
+    return;
+  }
+  const filename = activeSnip === null ? 'quickshare.txt' : `quickshare-${activeSnip.id}.txt`;
+  try {
+    downloadContent(content, filename);
+  } catch {
+    showMessage('Could not download the content. Copy it and save it manually instead.');
+  }
+}
+
 function handleClearContent(): void {
   clearPendingUpdate();
   clearError();
@@ -341,6 +354,7 @@ initTheme();
 initContentField(handleContentChange);
 initContentActions({
   onCopy: () => void handleCopyContent(),
+  onDownload: handleDownloadContent,
   onClear: handleClearContent,
 });
 initLookupField({

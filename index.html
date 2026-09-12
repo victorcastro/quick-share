@@ -217,20 +217,24 @@
 
           <div class="relative">
             <div class="content-glow hidden sm:block" aria-hidden="true"></div>
+            <div class="relative z-10 rounded-2xl bg-surface-2">
             <textarea
               id="content"
-              class="relative z-10 min-h-[300px] w-full resize-none overflow-hidden rounded-2xl border-0 bg-surface-2 px-5 py-4 font-mono text-sm leading-relaxed outline-none transition-shadow"
+              class="block min-h-[300px] w-full resize-none overflow-hidden rounded-2xl border-0 bg-transparent px-5 pt-4 pb-3 font-mono text-sm leading-relaxed outline-none transition-shadow"
               rows="13"
               spellcheck="false"
             ></textarea>
-          </div>
-          <div
-            id="content-actions"
-            class="flex items-center gap-2"
-            role="group"
-            aria-label="Content actions"
-            hidden
-          >
+            <footer
+              id="content-actions"
+              class="flex items-center gap-2 border-t border-border-subtle px-4 py-3"
+              role="group"
+              aria-label="Content actions"
+              hidden
+            >
+            <p
+              id="content-limit"
+              class="shrink-0 text-xs text-muted tabular-nums"
+            ></p>
             <p
               id="content-action-message"
               class="min-w-0 flex-1 text-right text-xs text-muted"
@@ -246,6 +250,15 @@
               <i data-lucide="copy" data-icon class="size-3.5" aria-hidden="true"></i>
               <i data-lucide="check" data-success class="size-3.5" aria-hidden="true"></i>
               <span>Copy</span>
+            </button>
+            <button
+              id="download-content"
+              type="button"
+              class="flex cursor-pointer items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-surface-2 hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
+              disabled
+            >
+              <i data-lucide="download" class="size-3.5" aria-hidden="true"></i>
+              <span>Download</span>
             </button>
             <div class="relative">
               <button
@@ -285,8 +298,9 @@
                 </div>
               </div>
             </div>
+            </footer>
+            </div>
           </div>
-          <p id="content-limit" class="text-xs text-danger" hidden></p>
         </section>
       </div>
 
