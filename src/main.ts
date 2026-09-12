@@ -2,12 +2,20 @@ import './style.css';
 import { MAX_CONTENT_LENGTH } from './core/constants';
 import { isSnipError } from './core/errors';
 import { isExpired } from './core/expiration';
+import { forgetSnip, readHistory, rememberSnip } from './data/history';
 import { createSnip, readSnip, updateSnip, watchSnip, type Snip } from './data/snips';
 import { buildShareUrl, clearHash, readIdFromHash, writeIdToHash } from './routing';
 import { copyContent, downloadContent, initContentActions } from './ui/content-actions';
 import { focusContent, initContentField, readContent, writeContent } from './ui/content-field';
 import { startCountdown, stopCountdown } from './ui/countdown';
 import { clearError, showError, showMessage } from './ui/error-banner';
+import {
+  copyHistoryCode,
+  initHistory,
+  renderHistory,
+  setHistoryOpen,
+  shareHistoryLink,
+} from './ui/history';
 import {
   clearLookupInvalid,
   initLookupField,
@@ -135,6 +143,8 @@ function activateSnip(snip: Snip, createdHere: boolean): void {
 
 function showCreated(snip: Snip): void {
   activateSnip(snip, true);
+  renderHistory(rememberSnip(snip));
+  setHistoryOpen(true);
 }
 
 function showSnip(snip: Snip): void {
@@ -349,6 +359,29 @@ async function handlePasteIntoLookup(): Promise<void> {
   }
 }
 
+async function handleHistoryCopy(id: string): Promise<void> {
+  try {
+    await copyHistoryCode(id);
+    showActionMessage('Code copied');
+  } catch {
+    showMessage('Could not copy the code. Select it and copy it manually instead.');
+  }
+}
+
+async function handleHistoryShare(id: string): Promise<void> {
+  try {
+    if (await shareHistoryLink(id)) {
+      showActionMessage('Link copied');
+    }
+  } catch {
+    showMessage('Could not share the link. Copy the code instead.');
+  }
+}
+
+function handleHistoryDismiss(id: string): void {
+  renderHistory(forgetSnip(id));
+}
+
 function consumeHash(): void {
   const id = readIdFromHash();
   if (id === null) {
@@ -376,8 +409,14 @@ initShareActions({
   onCopyQrImage: () => void handleCopyQrImage(),
   onQr: () => void handleQr(),
 });
+initHistory({
+  onCopy: (id) => void handleHistoryCopy(id),
+  onShare: (id) => void handleHistoryShare(id),
+  onDismiss: handleHistoryDismiss,
+});
 
 window.addEventListener('hashchange', consumeHash);
 
+renderHistory(readHistory());
 syncShareButtons();
 consumeHash();

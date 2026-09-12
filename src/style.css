@@ -114,6 +114,14 @@
     @apply h-auto w-full max-w-[150px] rounded-2xl bg-white p-2;
   }
 
+  .history-card.is-expired {
+    @apply opacity-60;
+  }
+
+  .history-card.is-expired [data-code] {
+    @apply text-muted line-through;
+  }
+
 }
 
 [hidden] {

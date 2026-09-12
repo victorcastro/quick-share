@@ -349,6 +349,86 @@
       </footer>
     </main>
 
+    <aside
+      id="history"
+      class="pointer-events-none fixed inset-x-3 bottom-3 z-40 flex max-h-[45vh] flex-col items-end gap-2 sm:inset-x-auto sm:right-4 sm:bottom-4 sm:max-h-[60vh] sm:w-72"
+      aria-label="Recent snips"
+    >
+      <ul id="history-list" class="flex w-full flex-col gap-2 overflow-y-auto p-1" hidden></ul>
+      <p
+        id="history-empty"
+        class="pointer-events-auto rounded-2xl border border-border-subtle bg-surface px-3 py-2 text-xs text-muted shadow-lg"
+        hidden
+      >
+        No links yet
+      </p>
+      <button
+        id="history-toggle"
+        type="button"
+        class="pointer-events-auto flex cursor-pointer items-center gap-2 rounded-full border border-border-subtle bg-surface px-3 py-1.5 text-xs font-medium text-muted shadow-lg transition-colors hover:border-border-strong hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        aria-controls="history-list"
+        aria-expanded="false"
+      >
+        <i data-lucide="history" class="size-3.5" aria-hidden="true"></i>
+        <span id="history-toggle-label">Show recent</span>
+        <span
+          id="history-count"
+          class="rounded-full bg-surface-2 px-1.5 py-0.5 font-mono text-[0.625rem] text-text tabular-nums"
+        ></span>
+      </button>
+    </aside>
+
+    <template id="history-card">
+      <li
+        class="history-card pointer-events-auto rounded-2xl border border-border-subtle bg-surface p-3 shadow-lg"
+      >
+        <div class="flex items-center gap-1.5">
+          <span data-code class="min-w-0 flex-1 truncate font-mono text-sm font-semibold"></span>
+          <button
+            data-copy
+            type="button"
+            class="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="Copy code"
+            title="Copy code"
+          >
+            <i data-lucide="copy" data-icon class="size-3.5" aria-hidden="true"></i>
+            <i data-lucide="check" data-success class="size-3.5" aria-hidden="true"></i>
+          </button>
+          <button
+            data-share
+            type="button"
+            class="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="Share link"
+            title="Share link"
+          >
+            <i data-lucide="share-2" data-icon class="size-3.5" aria-hidden="true"></i>
+            <i data-lucide="check" data-success class="size-3.5" aria-hidden="true"></i>
+          </button>
+          <button
+            data-qr
+            type="button"
+            class="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="Show QR code"
+            title="Show QR code"
+            aria-expanded="false"
+          >
+            <i data-lucide="qr-code" class="size-3.5" aria-hidden="true"></i>
+          </button>
+          <button
+            data-dismiss
+            type="button"
+            class="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            aria-label="Remove from history"
+            title="Remove from history"
+          >
+            <i data-lucide="x" class="size-3.5" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p data-remaining class="countdown mt-1"></p>
+        <div data-qr-panel class="qr mt-3 flex justify-center" hidden></div>
+      </li>
+    </template>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
