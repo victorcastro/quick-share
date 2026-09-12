@@ -1,26 +1,53 @@
-import { requireElement } from './dom';
-import { createQrElement } from './qr';
+import { requireElement, setText } from './dom';
+import { createQrElement, qrToPngBlob } from './qr';
 
-const COPIED_FEEDBACK_MS = 1500;
+const MESSAGE_DURATION_MS = 2000;
+const COPY_SUCCESS_DURATION_MS = 1500;
 
+const actionMessage = requireElement('action-message', HTMLElement);
+const newLinkAction = requireElement('new-link-action', HTMLElement);
+const newLinkButton = requireElement('new-link', HTMLButtonElement);
+const newLinkConfirm = requireElement('new-link-confirm', HTMLElement);
+const newLinkConfirmButton = requireElement('new-link-confirm-button', HTMLButtonElement);
+const newLinkCancelButton = requireElement('new-link-cancel', HTMLButtonElement);
 const copyButton = requireElement('copy', HTMLButtonElement);
-const copyFeedback = requireElement('copy-feedback', HTMLElement);
 const qrToggle = requireElement('qr-toggle', HTMLButtonElement);
 const qrPopover = requireElement('qr-popover', HTMLElement);
 const qrHost = requireElement('result-qr', HTMLElement);
+const copyQrImageButton = requireElement('copy-qr-image', HTMLButtonElement);
 
 let feedbackTimer: number | undefined;
+const successTimers = new Map<HTMLButtonElement, number>();
+let qrImageBlob: Blob | null = null;
 
-export type ShareAction = 'copy' | 'qr';
+export type ShareAction = 'new' | 'copy' | 'qr';
 
 const BUTTONS: ReadonlyArray<readonly [ShareAction, HTMLButtonElement]> = [
+  ['new', newLinkButton],
   ['copy', copyButton],
   ['qr', qrToggle],
 ];
 
 export function setShareEnabled(enabled: boolean): void {
+  newLinkButton.disabled = !enabled;
   copyButton.disabled = !enabled;
   qrToggle.disabled = !enabled;
+}
+
+export function setNewLinkVisible(visible: boolean): void {
+  newLinkAction.hidden = !visible;
+  if (!visible) {
+    setNewLinkConfirmationOpen(false);
+  }
+}
+
+function isNewLinkConfirmationOpen(): boolean {
+  return !newLinkConfirm.hidden;
+}
+
+function setNewLinkConfirmationOpen(open: boolean): void {
+  newLinkConfirm.hidden = !open;
+  newLinkButton.setAttribute('aria-expanded', String(open));
 }
 
 export function setShareBusy(action: ShareAction | null): void {
@@ -37,9 +64,19 @@ export function setShareBusy(action: ShareAction | null): void {
 
 export function renderQrCode(url: string): void {
   qrHost.replaceChildren();
+  qrImageBlob = null;
+  copyQrImageButton.disabled = true;
   const qr = createQrElement(url);
   if (qr !== null) {
     qrHost.appendChild(qr);
+    void qrToPngBlob(qr)
+      .then((blob) => {
+        if (qrHost.contains(qr)) {
+          qrImageBlob = blob;
+          copyQrImageButton.disabled = false;
+        }
+      })
+      .catch(() => undefined);
   }
 }
 
@@ -51,33 +88,90 @@ export function setQrPopoverOpen(open: boolean): void {
   qrPopover.hidden = !open;
 }
 
-function flashCopied(): void {
+export function showActionMessage(message: string): void {
   window.clearTimeout(feedbackTimer);
-  copyFeedback.classList.remove('opacity-0');
+  setText(actionMessage, message);
   feedbackTimer = window.setTimeout(() => {
-    copyFeedback.classList.add('opacity-0');
-  }, COPIED_FEEDBACK_MS);
+    setText(actionMessage, '');
+  }, MESSAGE_DURATION_MS);
+}
+
+function showButtonSuccess(button: HTMLButtonElement): void {
+  window.clearTimeout(successTimers.get(button));
+  button.classList.remove('is-success');
+  void button.offsetWidth;
+  button.classList.add('is-success');
+  successTimers.set(
+    button,
+    window.setTimeout(() => {
+      button.classList.remove('is-success');
+      successTimers.delete(button);
+    }, COPY_SUCCESS_DURATION_MS),
+  );
 }
 
 export async function copyShareUrl(url: string): Promise<void> {
   await navigator.clipboard.writeText(url);
-  flashCopied();
+  showButtonSuccess(copyButton);
+  showActionMessage('Link copied');
+}
+
+export async function copyQrImage(): Promise<void> {
+  if (qrImageBlob === null || typeof ClipboardItem === 'undefined') {
+    throw new Error('QR image clipboard support is unavailable.');
+  }
+
+  await navigator.clipboard.write([new ClipboardItem({ 'image/png': qrImageBlob })]);
+  showButtonSuccess(qrToggle);
+  showActionMessage('QR image copied');
 }
 
 export interface ShareActionHandlers {
+  onNew: () => void;
   onCopy: () => void;
+  onCopyQrImage: () => void;
   onQr: () => void;
 }
 
-export function initShareActions({ onCopy, onQr }: ShareActionHandlers): void {
-  copyButton.addEventListener('click', onCopy);
-  qrToggle.addEventListener('click', onQr);
+export function initShareActions({ onNew, onCopy, onCopyQrImage, onQr }: ShareActionHandlers): void {
+  newLinkButton.addEventListener('click', () => {
+    setQrPopoverOpen(false);
+    setNewLinkConfirmationOpen(!isNewLinkConfirmationOpen());
+  });
+  newLinkConfirmButton.addEventListener('click', () => {
+    setNewLinkConfirmationOpen(false);
+    onNew();
+  });
+  newLinkCancelButton.addEventListener('click', () => {
+    setNewLinkConfirmationOpen(false);
+    newLinkButton.focus();
+  });
+  copyButton.addEventListener('click', () => {
+    setNewLinkConfirmationOpen(false);
+    onCopy();
+  });
+  qrToggle.addEventListener('click', () => {
+    setNewLinkConfirmationOpen(false);
+    onQr();
+  });
+  copyQrImageButton.addEventListener('click', onCopyQrImage);
 
   document.addEventListener('click', (event) => {
-    if (!isQrPopoverOpen() || !(event.target instanceof Node)) {
+    if (!(event.target instanceof Node)) {
       return;
     }
-    if (!qrToggle.contains(event.target) && !qrPopover.contains(event.target)) {
+    if (
+      isNewLinkConfirmationOpen() &&
+      !newLinkButton.contains(event.target) &&
+      !newLinkConfirm.contains(event.target)
+    ) {
+      setNewLinkConfirmationOpen(false);
+    }
+    if (
+      isQrPopoverOpen() &&
+      !qrToggle.contains(event.target) &&
+      !qrPopover.contains(event.target)
+    ) {
       setQrPopoverOpen(false);
     }
   });

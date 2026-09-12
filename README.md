@@ -35,7 +35,9 @@ IDs are `LLLL-NNN`: four letters, a hyphen, three digits. The alphabet omits
 aloud, leaving 48 letters and roughly 5.3 billion combinations.
 
 Each snip stores `content`, `createdAt` and `expiresAt` in the `snips`
-collection, keyed by its ID. Reads compare the current time against `expiresAt`.
+collection, keyed by its ID. While it is active, edits update `content` in real
+time without extending the original expiry. Reads compare the current time
+against `expiresAt`.
 
 Share links use a URL fragment (`#/aKxP-428`), which the page reads on load to
 fill in the code and fetch the snip.
@@ -49,9 +51,9 @@ Four things are worth knowing before changing anything:
 
 - **`firestore.rules` is the only boundary.** The client config is public by
   design; the rules are what stop enumeration, overwrites and deletions.
-- **Collision safety is server-side.** Firestore treats a write over an existing
-  document as an update, and the rules deny updates, so an ID clash fails instead
-  of overwriting someone else's content.
+- **Collision safety is server-side.** Firestore only permits `content` to change
+  on a live document. A create attempt also changes `createdAt` and `expiresAt`,
+  so an ID clash still fails instead of overwriting someone else's snip.
 - **Expiry is enforced twice** — in the rules and again in the app — because
   Firestore's TTL deletion runs well after a snip expires.
 - **IDs are case-sensitive** and are the only credential. `aKxP-428` and
@@ -64,6 +66,8 @@ Four things are worth knowing before changing anything:
 - **No TTL cleanup on the Spark plan.** Expired snips stay in storage, though
   they are inaccessible from the moment they expire.
 - **No deletion or revocation.** A snip lives out its lifetime.
+- **Anyone with the ID can edit.** IDs are the only credential, so sharing a link
+  grants both read and live-edit access until it expires.
 - **Clock-sensitive.** A device more than ~10 minutes out of sync cannot create
   snips, since the rules validate `expiresAt` against server time.
 
