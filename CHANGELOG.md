@@ -10,6 +10,10 @@ Versioning: [SemVer](https://semver.org/).
 - The textarea footer hides its character counter in compact layouts while keeping all content
   actions available.
 - Increased the spacing between the main page sections from 16px to 32px.
+- Arranged the QuickShare brand and code lookup side by side in compact layouts, using a narrower
+  lookup field that occupies half the available width and smaller compact typography while keeping
+  the rest of the page in its normal vertical flow.
+- Gave the compact brand block the matching half-width column for a balanced header layout.
 
 ## [1.3.0] - 2026-09-12
 
