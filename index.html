@@ -94,14 +94,14 @@
 
         <section class="flex flex-col gap-3">
           <div class="flex flex-col items-end gap-2">
-            <div class="flex w-full items-center gap-3">
-              <p
-                id="action-message"
-                class="min-w-0 flex-1 text-right text-sm text-muted"
-                role="status"
-                aria-live="polite"
-              ></p>
-              <div class="flex shrink-0 items-center justify-end gap-2">
+          <div class="flex w-full flex-col items-center gap-2 sm:flex-row sm:items-center sm:gap-3">
+            <p
+              id="action-message"
+              class="w-full shrink-0 text-center text-sm text-muted sm:min-w-0 sm:flex-1 sm:text-right"
+              role="status"
+              aria-live="polite"
+            ></p>
+              <div class="flex shrink-0 items-center justify-center gap-2 sm:justify-end">
               <button
                 id="theme-toggle"
                 type="button"
@@ -216,7 +216,6 @@
           </div>
 
           <div class="relative">
-            <div class="content-glow hidden sm:block" aria-hidden="true"></div>
             <div class="relative z-10 rounded-2xl bg-surface-2">
             <textarea
               id="content"
@@ -244,33 +243,36 @@
             <button
               id="copy-content"
               type="button"
-              class="flex cursor-pointer items-center gap-2 rounded-full border border-border-subtle bg-surface px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:border-border-strong hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
+              aria-label="Copy content"
+              class="flex cursor-pointer items-center gap-2 rounded-full border border-border-subtle bg-surface px-2 py-1.5 text-xs font-medium text-muted transition-colors hover:border-border-strong hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50 sm:px-3"
               disabled
             >
               <i data-lucide="copy" data-icon class="size-3.5" aria-hidden="true"></i>
               <i data-lucide="check" data-success class="size-3.5" aria-hidden="true"></i>
-              <span>Copy</span>
+              <span class="hidden sm:inline">Copy</span>
             </button>
             <button
               id="download-content"
               type="button"
-              class="flex cursor-pointer items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-surface-2 hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
+              aria-label="Download content"
+              class="flex cursor-pointer items-center gap-2 rounded-full px-2 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-surface-2 hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50 sm:px-3"
               disabled
             >
               <i data-lucide="download" class="size-3.5" aria-hidden="true"></i>
-              <span>Download</span>
+              <span class="hidden sm:inline">Download</span>
             </button>
             <div class="relative">
               <button
                 id="clear-content"
                 type="button"
-                class="flex cursor-pointer items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-surface-2 hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
+                aria-label="Clear content"
+                class="flex cursor-pointer items-center gap-2 rounded-full px-2 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-surface-2 hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50 sm:px-3"
                 aria-haspopup="dialog"
                 aria-expanded="false"
                 disabled
               >
                 <i data-lucide="eraser" class="size-3.5" aria-hidden="true"></i>
-                <span>Clear</span>
+                <span class="hidden sm:inline">Clear</span>
               </button>
               <div
                 id="clear-content-confirm"
