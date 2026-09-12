@@ -1,8 +1,8 @@
+import { showButtonSuccess } from './button-feedback';
 import { requireElement, setText } from './dom';
 import { createQrElement, qrToPngBlob } from './qr';
 
 const MESSAGE_DURATION_MS = 2000;
-const COPY_SUCCESS_DURATION_MS = 1500;
 
 const actionMessage = requireElement('action-message', HTMLElement);
 const newLinkAction = requireElement('new-link-action', HTMLElement);
@@ -17,7 +17,6 @@ const qrHost = requireElement('result-qr', HTMLElement);
 const copyQrImageButton = requireElement('copy-qr-image', HTMLButtonElement);
 
 let feedbackTimer: number | undefined;
-const successTimers = new Map<HTMLButtonElement, number>();
 let qrImageBlob: Blob | null = null;
 
 export type ShareAction = 'new' | 'copy' | 'qr';
@@ -94,20 +93,6 @@ export function showActionMessage(message: string): void {
   feedbackTimer = window.setTimeout(() => {
     setText(actionMessage, '');
   }, MESSAGE_DURATION_MS);
-}
-
-function showButtonSuccess(button: HTMLButtonElement): void {
-  window.clearTimeout(successTimers.get(button));
-  button.classList.remove('is-success');
-  void button.offsetWidth;
-  button.classList.add('is-success');
-  successTimers.set(
-    button,
-    window.setTimeout(() => {
-      button.classList.remove('is-success');
-      successTimers.delete(button);
-    }, COPY_SUCCESS_DURATION_MS),
-  );
 }
 
 export async function copyShareUrl(url: string): Promise<void> {

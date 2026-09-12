@@ -1,6 +1,6 @@
+import { showButtonSuccess } from './button-feedback';
 import { requireElement, setText } from './dom';
 
-const COPY_SUCCESS_DURATION_MS = 1500;
 const MESSAGE_DURATION_MS = 2000;
 
 const contentActions = requireElement('content-actions', HTMLElement);
@@ -12,7 +12,6 @@ const clearContentConfirm = requireElement('clear-content-confirm', HTMLElement)
 const clearContentConfirmButton = requireElement('clear-content-confirm-button', HTMLButtonElement);
 const clearContentCancelButton = requireElement('clear-content-cancel', HTMLButtonElement);
 
-let successTimer: number | undefined;
 let messageTimer: number | undefined;
 
 export function setContentActionsEnabled(enabled: boolean): void {
@@ -44,15 +43,8 @@ function showContentActionMessage(message: string): void {
 
 export async function copyContent(content: string): Promise<void> {
   await navigator.clipboard.writeText(content);
-  window.clearTimeout(successTimer);
-  window.clearTimeout(messageTimer);
-  copyContentButton.classList.remove('is-success');
-  void copyContentButton.offsetWidth;
-  copyContentButton.classList.add('is-success');
+  showButtonSuccess(copyContentButton);
   showContentActionMessage('Content copied');
-  successTimer = window.setTimeout(() => {
-    copyContentButton.classList.remove('is-success');
-  }, COPY_SUCCESS_DURATION_MS);
 }
 
 export function downloadContent(content: string, filename: string): void {
