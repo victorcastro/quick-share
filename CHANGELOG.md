@@ -3,6 +3,13 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.3.1] - 2026-09-12
+
+### Changed
+
+- The textarea footer hides its character counter in compact layouts while keeping all content
+  actions available.
+
 ## [1.3.0] - 2026-09-12
 
 ### Added
@@ -114,6 +121,7 @@ First release.
 - The TTL policy requires the Blaze plan. On Spark, expired snips stay in storage although they remain inaccessible.
 - A snip cannot be deleted or revoked before it expires.
 
+[1.3.1]: https://github.com/victorcastro/quick-share/releases/tag/v1.3.1
 [1.3.0]: https://github.com/victorcastro/quick-share/releases/tag/v1.3.0
 [1.2.0]: https://github.com/victorcastro/quick-share/releases/tag/v1.2.0
 [1.1.0]: https://github.com/victorcastro/quick-share/releases/tag/v1.1.0
