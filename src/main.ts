@@ -88,7 +88,7 @@ function activateSnip(snip: Snip, createdHere: boolean): void {
     writeIdToHash(snip.id);
     setLookupValue(snip.id);
   }
-  startCountdown(snip.expiresAt, () => {
+  startCountdown(snip.id, snip.expiresAt, () => {
     if (activeSnip?.id !== snip.id) {
       return;
     }
@@ -333,6 +333,14 @@ function handleClearContent(): void {
   focusContent();
 }
 
+function handleClearLookup(): void {
+  clearError();
+  invalidateShare();
+  stopCountdown();
+  clearHash();
+  syncShareButtons();
+}
+
 async function handlePasteIntoLookup(): Promise<void> {
   try {
     pasteIntoLookup(await navigator.clipboard.readText());
@@ -359,7 +367,7 @@ initContentActions({
 });
 initLookupField({
   onSubmit: (rawId) => void openSnip(rawId),
-  onClear: clearHash,
+  onClear: handleClearLookup,
   onPaste: () => void handlePasteIntoLookup(),
 });
 initShareActions({

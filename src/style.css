@@ -22,6 +22,8 @@
   --danger-border: rgb(200 56 79 / 0.26);
   --danger-soft: rgb(200 56 79 / 0.18);
   --warn: #8a5d0b;
+  --pattern: rgb(26 29 34 / 0.08);
+  --bg-glow: rgb(255 255 255 / 0.85);
 }
 
 .dark {
@@ -44,6 +46,8 @@
   --danger-border: rgb(247 118 142 / 0.28);
   --danger-soft: rgb(247 118 142 / 0.2);
   --warn: #e0af68;
+  --pattern: rgb(230 232 235 / 0.06);
+  --bg-glow: rgb(38 42 49 / 0.45);
 }
 
 @theme {
@@ -73,9 +77,23 @@
 
 @layer base {
   body {
-    background: var(--bg);
+    background:
+      radial-gradient(75% 55% at 50% 48%, var(--bg-glow), transparent 70%),
+      var(--bg);
+    background-attachment: fixed;
     color: var(--text);
     -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    z-index: -1;
+    inset: 0;
+    background-image: radial-gradient(var(--pattern) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(100% 80% at 50% 48%, #000 30%, transparent 85%);
+    pointer-events: none;
   }
 
   ::placeholder {

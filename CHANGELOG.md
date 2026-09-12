@@ -3,6 +3,28 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.4.1] - 2026-09-12
+
+### Added
+
+- Subtle dot grid across the page background, drawn as a fixed CSS gradient layer with its own
+  colour token per theme, masked so it fades out towards the edges of the viewport.
+- Soft central glow behind the content, as a fixed radial gradient with a per-theme colour token.
+- Footer link to the GitHub repository, showing the GitHub mark, "Source code" and the current
+  package version, which the build injects into the page.
+
+### Changed
+
+- The expiry countdown now names the snip it belongs to, reading "aKxP-428 expires in 0:40".
+- The tagline, page title and meta tags now describe QuickShare as a cross-platform way to move
+  text between devices. Adds canonical, Open Graph and Twitter Card tags for link previews.
+
+### Fixed
+
+- Clearing the lookup field now releases the active snip instead of only clearing the URL hash. The
+  expiry countdown stops, the share URL and QR are invalidated and the Firestore listener is
+  detached. The textarea keeps its content as an unshared draft.
+
 ## [1.4.0] - 2026-09-12
 
 ### Added
