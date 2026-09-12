@@ -1,11 +1,11 @@
-# QuickSnip
+# QuickShare
 
 Ephemeral plain-text sharing. Paste text, get a short code like `aKxP-428`, share
 it, and whoever holds the code reads the text until it expires a few minutes later.
 
 No sign-up, no login, no backend: the browser talks to Firestore directly.
 
-**Try it: [victorcastro.github.io/quick-snip](https://victorcastro.github.io/quick-snip)**
+**Try it: [victorcastro.github.io/quick-share](https://victorcastro.github.io/quick-share)**
 
 ## Quick start
 
