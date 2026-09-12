@@ -1,7 +1,9 @@
 # QuickShare
 
-Ephemeral plain-text sharing. Paste text, get a short code like `aKxP-428`, share
-it, and whoever holds the code reads the text until it expires a few minutes later.
+The fastest way to move text between devices. Paste on your phone, open on your
+laptop: any browser on Android, iOS, Windows, macOS or Linux works, with a short
+code like `aKxP-428`, a link or a QR. Whoever holds the code reads the text until
+it expires a few minutes later.
 
 No sign-up, no login, no backend: the browser talks to Firestore directly.
 

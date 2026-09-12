@@ -5,6 +5,11 @@ Versioning: [SemVer](https://semver.org/).
 
 ## [1.4.1] - 2026-09-12
 
+### Changed
+
+- The tagline, page title and meta tags now describe QuickShare as a cross-platform way to move
+  text between devices. Adds canonical, Open Graph and Twitter Card tags for link previews.
+
 ### Fixed
 
 - Clearing the lookup field now releases the active snip instead of only clearing the URL hash. The
