@@ -1,4 +1,5 @@
 import { MAX_CONTENT_LENGTH } from '../core/constants';
+import { setContentActionsEnabled } from './content-actions';
 import { requireElement, setText } from './dom';
 import { initTypewriter } from './typewriter';
 
@@ -19,6 +20,7 @@ export function readContent(): string {
 export function refreshContentField(notify = true): void {
   const overLimit = contentInput.value.length > MAX_CONTENT_LENGTH;
 
+  setContentActionsEnabled(contentInput.value.length > 0);
   contentInput.classList.toggle('is-invalid', overLimit);
   contentInput.toggleAttribute('aria-invalid', overLimit);
   contentLimit.hidden = !overLimit;
@@ -39,6 +41,10 @@ export function refreshContentField(notify = true): void {
 export function writeContent(value: string): void {
   contentInput.value = value;
   refreshContentField(false);
+}
+
+export function focusContent(): void {
+  contentInput.focus();
 }
 
 export function initContentField(onChange: () => void): void {

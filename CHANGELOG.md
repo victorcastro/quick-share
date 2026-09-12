@@ -3,6 +3,15 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.3.0] - 2026-09-12
+
+### Added
+
+- A separate content action bar can copy the textarea text and show its confirmation alongside the
+  action controls.
+- Clearing the current content now requires confirmation from an anchored popover before resetting
+  the textarea, lookup code and active view. The shared snip remains available until normal expiry.
+
 ## [1.2.0] - 2026-09-12
 
 ### Added
@@ -99,6 +108,7 @@ First release.
 - The TTL policy requires the Blaze plan. On Spark, expired snips stay in storage although they remain inaccessible.
 - A snip cannot be deleted or revoked before it expires.
 
+[1.3.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.3.0
 [1.2.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.2.0
 [1.1.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.1.0
 [1.0.0]: https://github.com/victorcastro/quick-snip/releases/tag/v1.0.0

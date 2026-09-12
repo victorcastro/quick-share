@@ -224,6 +224,67 @@
               spellcheck="false"
             ></textarea>
           </div>
+          <div
+            id="content-actions"
+            class="flex items-center gap-2"
+            role="group"
+            aria-label="Content actions"
+          >
+            <p
+              id="content-action-message"
+              class="min-w-0 flex-1 text-right text-xs text-muted"
+              role="status"
+              aria-live="polite"
+            ></p>
+            <button
+              id="copy-content"
+              type="button"
+              class="flex cursor-pointer items-center gap-2 rounded-full border border-border-subtle bg-surface px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:border-border-strong hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
+              disabled
+            >
+              <i data-lucide="copy" data-icon class="size-3.5" aria-hidden="true"></i>
+              <i data-lucide="check" data-success class="size-3.5" aria-hidden="true"></i>
+              <span>Copy</span>
+            </button>
+            <div class="relative">
+              <button
+                id="clear-content"
+                type="button"
+                class="flex cursor-pointer items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-surface-2 hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                disabled
+              >
+                <i data-lucide="eraser" class="size-3.5" aria-hidden="true"></i>
+                <span>Clear</span>
+              </button>
+              <div
+                id="clear-content-confirm"
+                class="absolute right-0 bottom-full z-30 mb-2 w-64 rounded-2xl border border-border-subtle bg-surface p-3 shadow-lg"
+                role="dialog"
+                aria-label="Confirm clearing content"
+                hidden
+              >
+                <p class="text-sm text-text">Clear the current content?</p>
+                <div class="mt-3 flex justify-end gap-2">
+                  <button
+                    id="clear-content-cancel"
+                    type="button"
+                    class="cursor-pointer rounded-full px-3 py-1.5 text-xs text-muted transition-colors hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    id="clear-content-confirm-button"
+                    type="button"
+                    class="cursor-pointer rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-ink transition-colors hover:bg-accent-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
           <p id="content-limit" class="text-xs text-danger" hidden></p>
         </section>
       </div>
