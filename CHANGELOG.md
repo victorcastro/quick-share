@@ -7,10 +7,10 @@ Versioning: [SemVer](https://semver.org/).
 
 ### Added
 
-- Firebase App Check with the reCAPTCHA v3 provider attests every Firestore request as coming from
-  the web app. The site key is read from `VITE_RECAPTCHA_SITE_KEY`, and `VITE_APPCHECK_DEBUG_TOKEN`
-  registers a debug token in development only. Enforcement for Cloud Firestore is configured in the
-  Firebase console.
+- Firebase App Check with the reCAPTCHA Enterprise provider attests every Firestore request as
+  coming from the web app. The site key is read from `VITE_RECAPTCHA_SITE_KEY`, and
+  `VITE_APPCHECK_DEBUG_TOKEN` registers a debug token in development only. Enforcement for Cloud
+  Firestore is configured in the Firebase console.
 
 ## [1.3.2] - 2026-09-12
 

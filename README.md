@@ -61,12 +61,12 @@ Four things are worth knowing before changing anything:
 
 ## Limitations
 
-- **No real rate limiting.** Firebase App Check (reCAPTCHA v3) attests that
-  requests come from the real web app, which blocks scripted abuse from outside
-  it, but it is not per-user or per-IP quota rate limiting; that needs Cloud
-  Functions or similar. App Check also has to be enforced for Cloud Firestore in
-  the Firebase console (App Check -> APIs -> Cloud Firestore -> Enforce);
-  registering the app alone does not enforce anything.
+- **No real rate limiting.** Firebase App Check (reCAPTCHA Enterprise) attests
+  that requests come from the real web app, which blocks scripted abuse from
+  outside it, but it is not per-user or per-IP quota rate limiting; that needs
+  Cloud Functions or similar. App Check also has to be enforced for Cloud
+  Firestore in the Firebase console (App Check -> APIs -> Cloud Firestore ->
+  Enforce); registering the app alone does not enforce anything.
 - **No TTL cleanup on the Spark plan.** Expired snips stay in storage, though
   they are inaccessible from the moment they expire.
 - **No deletion or revocation.** A snip lives out its lifetime.
