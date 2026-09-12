@@ -16,6 +16,24 @@ const REQUIRED_ENV = [
   'VITE_RECAPTCHA_SITE_KEY',
 ];
 
+const APP_VERSION = (
+  JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as {
+    version: string;
+  }
+).version;
+
+function appVersion(): Plugin {
+  return {
+    name: 'app-version',
+    transformIndexHtml: {
+      order: 'pre',
+      handler(html) {
+        return html.replaceAll('%APP_VERSION%', APP_VERSION);
+      },
+    },
+  };
+}
+
 const ICONS_DIR = join(
   dirname(createRequire(import.meta.url).resolve('lucide-static/package.json')),
   'icons',
@@ -90,7 +108,7 @@ export default defineConfig(({ command, mode }) => {
 
   return {
     base: './',
-    plugins: [lucideIcons(), tailwindcss(), minifyHtml()],
+    plugins: [appVersion(), lucideIcons(), tailwindcss(), minifyHtml()],
     test: {
       environment: 'node',
       include: ['tests/**/*.test.ts'],

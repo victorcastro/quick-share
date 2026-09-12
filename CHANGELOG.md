@@ -5,6 +5,11 @@ Versioning: [SemVer](https://semver.org/).
 
 ## [1.4.1] - 2026-09-12
 
+### Added
+
+- Footer link to the GitHub repository, showing the GitHub mark, "Source code" and the current
+  package version, which the build injects into the page.
+
 ### Changed
 
 - The tagline, page title and meta tags now describe QuickShare as a cross-platform way to move
