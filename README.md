@@ -76,6 +76,10 @@ Four things are worth knowing before changing anything:
   grants both read and live-edit access until it expires.
 - **Clock-sensitive.** A device more than ~10 minutes out of sync cannot create
   snips, since the rules validate `expiresAt` against server time.
+- **The hosted site loads Google Analytics.** Production builds initialise GA4
+  through the Firebase SDK for anonymous usage statistics; no snip content and no
+  ID ever reach it, since the ID travels in the URL fragment. A build without
+  `VITE_FIREBASE_MEASUREMENT_ID` loads nothing, and `npm run dev` never does.
 
 ## License
 

@@ -1,7 +1,8 @@
+import { getAnalytics, isSupported } from 'firebase/analytics';
 import { initializeApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { getFirestore } from 'firebase/firestore';
-import { firebaseConfig, recaptchaSiteKey } from './firebase-env';
+import { firebaseConfig, measurementId, recaptchaSiteKey } from './firebase-env';
 
 declare global {
   interface Window {
@@ -19,5 +20,13 @@ initializeAppCheck(app, {
   provider: new ReCaptchaEnterpriseProvider(recaptchaSiteKey),
   isTokenAutoRefreshEnabled: true,
 });
+
+if (import.meta.env.PROD && measurementId !== undefined) {
+  void isSupported().then((supported) => {
+    if (supported) {
+      getAnalytics(app);
+    }
+  });
+}
 
 export const db = getFirestore(app);

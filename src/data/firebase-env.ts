@@ -10,6 +10,13 @@ function required(name: keyof ImportMetaEnv): string {
   return value;
 }
 
+function optional(name: keyof ImportMetaEnv): string | undefined {
+  const value = env[name];
+  return typeof value === 'string' && value.length > 0 ? value : undefined;
+}
+
+export const measurementId = optional('VITE_FIREBASE_MEASUREMENT_ID');
+
 export const firebaseConfig = {
   apiKey: required('VITE_FIREBASE_API_KEY'),
   authDomain: required('VITE_FIREBASE_AUTH_DOMAIN'),
@@ -17,6 +24,7 @@ export const firebaseConfig = {
   storageBucket: required('VITE_FIREBASE_STORAGE_BUCKET'),
   messagingSenderId: required('VITE_FIREBASE_MESSAGING_SENDER_ID'),
   appId: required('VITE_FIREBASE_APP_ID'),
+  ...(measurementId === undefined ? {} : { measurementId }),
 } as const;
 
 export const recaptchaSiteKey = required('VITE_RECAPTCHA_SITE_KEY');
