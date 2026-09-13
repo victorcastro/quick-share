@@ -3,6 +3,15 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/).
 
+## [1.5.1] - 2026-09-13
+
+### Added
+
+- Google Analytics 4, wired through the Firebase SDK on the existing app instance and initialized
+  only in production builds and only when a measurement ID is configured. Collection is limited to
+  the automatic events - page views, sessions and engagement - with no custom events, and nothing
+  about the snips is sent: the code lives in the URL fragment, which never leaves the browser.
+
 ## [1.5.0] - 2026-09-12
 
 ### Added
